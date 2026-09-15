@@ -1,7 +1,32 @@
 ﻿@page "/"
+@inject HttpClient Http
 
-<PageTitle>Home</PageTitle>
+<PageTitle>E-Shop Pradinis</PageTitle>
 
-<h1>Hello, world!</h1>
+<main>
+    <p>Sveiki atvykę į mūsų parduotuvės projektą!</p>
 
-Welcome to your new app.
+    <div style="margin-top: 20px; padding: 15px; border: 2px solid #28a745; background-color: #e8f5e9; border-radius: 6px;">
+        <strong>Atsakymas is backendo per HTTP:</strong>
+        <p style="margin: 5px 0 0 0; color: #155724;">@apiMessage</p>
+    </div>
+</main>
+
+@code {
+    private string apiMessage = "Kraunama...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await Http.GetFromJsonAsync<StatusResponse>("http://localhost:5000/api/status");
+            apiMessage = response?.Message ?? "Gautas tuscias atsakymas.";
+        }
+        catch (Exception ex)
+        {
+            apiMessage = "Nepavyko prisijungti prie backendo: " + ex.Message;
+        }
+    }
+
+    public record StatusResponse(string Message);
+}

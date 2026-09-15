@@ -1,39 +1,30 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">EShop.Client</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+﻿<header class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-2 mb-4 shadow-sm">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <a class="navbar-brand fw-bold fs-4 text-white text-decoration-none" href="">
+            Parduotuvė
+        </a>
+
+        <nav class="d-flex gap-3">
+            <NavLink class="nav-link text-white-50 px-3 py-1 rounded" href="" Match="NavLinkMatch.All">
+                Pradžia
+            </NavLink>
+            <NavLink class="nav-link text-white-50 px-3 py-1 rounded" href="products">
+                Produktai
+            </NavLink>
+            <NavLink class="nav-link text-white-50 px-3 py-1 rounded" href="cart">
+                Krepšelis
+            </NavLink>
+        </nav>
     </div>
-</div>
+</header>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
-
-@code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
+<style>
+    .nav-link.active {
+        color: #ffffff !important;
+        background-color: rgba(255, 255, 255, 0.15);
+        font-weight: 600;
     }
-}
+    .nav-link:hover {
+        color: #ffffff !important;
+    }
+</style>

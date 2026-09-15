@@ -1,16 +1,13 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+<div class="page d-flex flex-column min-vh-100">
+    <NavMenu />
 
-        <article class="content px-4">
-            @Body
-        </article>
+    <main class="container flex-grow-1">
+        @Body
     </main>
+
+    <footer class="text-center py-3 text-muted border-top mt-5">
+        <small>© 2026 Parduotuvės projektas. Visos teisės saugomos.</small>
+    </footer>
 </div>
