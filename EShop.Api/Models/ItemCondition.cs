@@ -5,7 +5,7 @@ public enum ItemCondition
      New,
      VeryGood,
      Good,
-    Decent,
+     Decent,
      Used,
-    VeryUsed
+     VeryUsed
 }
