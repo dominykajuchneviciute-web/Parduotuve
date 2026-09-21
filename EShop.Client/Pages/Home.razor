@@ -1,30 +1,68 @@
 ﻿@page "/"
 @inject HttpClient Http
 
-<PageTitle>E-Shop Pradinis</PageTitle>
-
-<main>
-    <p>Sveiki atvykę į mūsų parduotuvės projektą!</p>
-
-    <div style="margin-top: 20px; padding: 15px; border: 2px solid #28a745; background-color: #e8f5e9; border-radius: 6px;">
-        <strong>Atsakymas is backendo per HTTP:</strong>
-        <p style="margin: 5px 0 0 0; color: #155724;">@apiMessage</p>
+<div class="container mt-4">
+    <div class="p-5 mb-4 bg-light rounded-3 text-center border shadow-sm">
+        <h1 class="display-5 fw-bold">Daiktų mainų platforma</h1>
+        <p class="fs-5 text-muted">Apsikeiskite nereikalingais daiktais be jokių pinigų – gyvai arba siuntimu!</p>
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            <a href="items" class="btn btn-primary btn-lg">Naršyti daiktus</a>
+            <a href="my-items" class="btn btn-outline-secondary btn-lg">Pasiūlyti mainams</a>
+        </div>
     </div>
-</main>
+
+  @*<div class="alert alert-info d-flex align-items-center justify-content-between" role="alert">
+        <div>
+            <strong>API būsena:</strong> <span>@apiStatus</span>
+        </div>
+        <button class="btn btn-sm btn-outline-info" @onclick="CheckApiStatus">Tikrinti iš naujo</button>
+    </div>*@ 
+
+    <h3 class="mt-5 mb-3">Naujausi mainų pasiūlymai</h3>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <div class="card h-100 shadow-sm border-start border-4">
+                <div class="card-body">
+                    <h5>Miesto dviratis</h5>
+                    <p class="text-muted small mb-2">Maino būdas: <span class="badge bg-info text-dark">Gyvai</span></p>
+                    <p class="mb-3"><strong>Ieško mainams:</strong> Paspirtuko arba laikrodžio</p>
+                    <a href="item/1" class="btn btn-sm btn-outline-primary">Peržiūrėti daiktą</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card h-100 shadow-sm border-start border-4">
+                <div class="card-body">
+                    <h5>Dell 24" monitorius</h5>
+                    <p class="text-muted small mb-2">Maino būdas: <span class="badge bg-secondary">Siuntimu</span></p>
+                    <p class="mb-3"><strong>Ieško mainams:</strong> Grafinės planšetės</p>
+                    <a href="item/2" class="btn btn-sm btn-outline-primary">Peržiūrėti daiktą</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
-    private string apiMessage = "Kraunama...";
+    private string apiStatus = "Tikrinama...";
 
     protected override async Task OnInitializedAsync()
     {
+        await CheckApiStatus();
+    }
+
+    private async Task CheckApiStatus()
+    {
+        apiStatus = "Jungiamasi prie API...";
         try
         {
             var response = await Http.GetFromJsonAsync<StatusResponse>("http://localhost:5000/api/status");
-            apiMessage = response?.Message ?? "Gautas tuscias atsakymas.";
+            apiStatus = response?.Message ?? "Atsakymas gautas, bet tuščias.";
         }
-        catch (Exception ex)
+        catch
         {
-            apiMessage = "Nepavyko prisijungti prie backendo: " + ex.Message;
+            apiStatus = "Nepavyko prisijungti prie backendo (patikrinkite ar paleistas EShop.Api).";
         }
     }
 

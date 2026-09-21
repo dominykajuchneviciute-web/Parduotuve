@@ -1,0 +1,77 @@
+@page "/item/{Id:int}"
+@inject HttpClient Http
+
+<div class="container mt-4">
+    <a href="items" class="btn btn-secondary btn-sm mb-3">← Atgal į daiktų sąrašą</a>
+
+    @if (isLoading)
+    {
+        <div class="alert alert-info">Kraunama informacija apie daiktą...</div>
+    }
+    else if (item == null)
+    {
+        <div class="alert alert-warning">Daiktas su ID: @Id nerastas.</div>
+    }
+    else
+    {
+        <div class="card p-4 shadow-sm">
+            <div class="row">
+                <div class="col-md-6 d-flex align-items-center justify-content-center bg-light" style="min-height: 280px; border-radius: 8px;">
+                    <span class="fs-4 text-muted">Daikto nuotrauka</span>
+                </div>
+                <div class="col-md-6">
+                    <h2>@item.Title</h2>
+                    <div class="my-3">
+                        <span class="badge bg-secondary fs-6 me-2">@item.Category</span>
+                        <span class="badge bg-info text-dark fs-6">Mainai: @item.ExchangeType</span>
+                    </div>
+
+                    <div class="p-3 my-3 bg-light border rounded">
+                        <h6 class="text-primary fw-bold mb-1">Savininkas norėtų išsikeisti į:</h6>
+                        <p class="mb-0">@item.LookingFor</p>
+                    </div>
+
+                    <p><strong>Aprašymas:</strong> @item.Description</p>
+
+                    <hr />
+                    <button class="btn btn-success me-2" @onclick="() => showProposalAlert = true">🤝 Siūlyti mainus</button>
+                    <button class="btn btn-outline-danger">Įsiminti</button>
+
+                    @if (showProposalAlert)
+                    {
+                        <div class="alert alert-success mt-3 py-2">
+                            Pasiūlymas išsiųstas! Savininkas su jumis susisieks.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private ItemDto? item;
+    private bool isLoading = true;
+    private bool showProposalAlert = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            item = await Http.GetFromJsonAsync<ItemDto>($"http://localhost:5000/api/items/{Id}");
+        }
+        catch
+        {
+            item = null;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    public record ItemDto(int Id, string Title, string Description, string Category, string ExchangeType, string LookingFor);
+}
