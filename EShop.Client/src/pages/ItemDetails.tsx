@@ -35,21 +35,17 @@ export default function ItemDetails() {
         <div className="card p-4 shadow-sm">
           <div className="row">
             <div className="col-md-6 d-flex align-items-center justify-content-center bg-light" style={{ minHeight: "280px", borderRadius: "8px" }}>
-              <span className="fs-4 text-muted">Daikto nuotrauka</span>
+              <span className="fs-4 text-muted">Nuotraukos vieta</span>
             </div>
             <div className="col-md-6">
-              <h2>{item.title}</h2>
-              <div className="my-3">
-                <span className="badge bg-secondary fs-6 me-2">{item.category}</span>
-                <span className="badge bg-info text-dark fs-6">Mainai: {item.exchangeType}</span>
-              </div>
-
-              <div className="p-3 my-3 bg-light border rounded">
-                <h6 className="text-primary fw-bold mb-1">Savininkas norėtų išsikeisti į:</h6>
-                <p className="mb-0">{item.lookingFor}</p>
-              </div>
-
+              <h2>{item.name}</h2>
+              <hr />
+              <p><strong>Būklė (Condition):</strong> {item.condition || "Nenurodyta"}</p>
+              <p><strong>Dydis (Size):</strong> {item.size || "Nenurodyta"}</p>
+              <p><strong>Gamintojas (Manufacturer):</strong> {item.manufacturer || "Nenurodyta"}</p>
+              <p><strong>Spalva (Color):</strong> {item.color || "Nenurodyta"}</p>
               <p><strong>Aprašymas:</strong> {item.description}</p>
+
               <hr />
               <button className="btn btn-success me-2" onClick={() => setShowProposalAlert(true)}>🤝 Siūlyti mainus</button>
               <button className="btn btn-outline-danger">Įsiminti</button>

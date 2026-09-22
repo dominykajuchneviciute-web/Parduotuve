@@ -6,11 +6,12 @@ export default function MyItems() {
   const [isLoading, setIsLoading] = useState(true);
   const [statusMessage, setStatusMessage] = useState("");
 
-  const [newItemTitle, setNewItemTitle] = useState("");
-  const [newItemDescription, setNewItemDescription] = useState("");
-  const [newItemCategory, setNewItemCategory] = useState("Elektronika");
-  const [newItemExchangeType, setNewItemExchangeType] = useState("Gyvai");
-  const [newItemLookingFor, setNewItemLookingFor] = useState("");
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [condition, setCondition] = useState("Naudotas");
+  const [size, setSize] = useState("");
+  const [manufacturer, setManufacturer] = useState("");
+  const [color, setColor] = useState("");
 
   const loadItems = () => {
     setIsLoading(true);
@@ -21,7 +22,7 @@ export default function MyItems() {
         setIsLoading(false);
       })
       .catch(() => {
-        setStatusMessage("Nepavyko prisijungti prie API.");
+        setStatusMessage("Nepavyko pasiekti API.");
         setIsLoading(false);
       });
   };
@@ -31,17 +32,18 @@ export default function MyItems() {
   }, []);
 
   const createItem = async () => {
-    if (!newItemTitle.trim() || !newItemLookingFor.trim()) {
-      setStatusMessage("Nurodykite pavadinimą ir į ką norite išsimainyti!");
+    if (!name.trim()) {
+      setStatusMessage("Nurodykite daikto pavadinimą!");
       return;
     }
 
     const payload = {
-      title: newItemTitle,
-      description: newItemDescription,
-      category: newItemCategory,
-      exchangeType: newItemExchangeType,
-      lookingFor: newItemLookingFor,
+      name,
+      description,
+      condition,
+      size,
+      manufacturer,
+      color
     };
 
     const res = await fetch("http://localhost:5000/api/items", {
@@ -51,10 +53,12 @@ export default function MyItems() {
     });
 
     if (res.ok) {
-      setStatusMessage("Mainų skelbimas sėkmingai paskelbtas!");
-      setNewItemTitle("");
-      setNewItemDescription("");
-      setNewItemLookingFor("");
+      setStatusMessage("Daiktas sėkmingai pridėtas!");
+      setName("");
+      setDescription("");
+      setSize("");
+      setManufacturer("");
+      setColor("");
       loadItems();
     }
   };
@@ -77,41 +81,38 @@ export default function MyItems() {
             <h5>+ Siūlyti naują daiktą</h5>
             <hr />
             {statusMessage && <div className="alert alert-info py-2">{statusMessage}</div>}
+            
             <div className="mb-2">
-              <label className="form-label">Daikto pavadinimas:</label>
-              <input type="text" className="form-control" value={newItemTitle} onChange={(e) => setNewItemTitle(e.target.value)} placeholder="Pvz. Žieminė striukė" />
+              <label className="form-label">Pavadinimas (Name):</label>
+              <input type="text" className="form-control" value={name} onChange={(e) => setName(e.target.value)} placeholder="Pvz. Dviratis" />
             </div>
             <div className="mb-2">
-              <label className="form-label">Kategorija:</label>
-              <select className="form-select" value={newItemCategory} onChange={(e) => setNewItemCategory(e.target.value)}>
-                <option value="Elektronika">Elektronika</option>
-                <option value="Drabužiai">Drabužiai</option>
-                <option value="Transportas">Transportas</option>
-                <option value="Knygos">Knygos</option>
-                <option value="Buitis">Buitis</option>
+              <label className="form-label">Būklė (Condition):</label>
+              <select className="form-select" value={condition} onChange={(e) => setCondition(e.target.value)}>
+                <option value="Naujas">Naujas</option>
+                <option value="Naudotas">Naudotas</option>
               </select>
             </div>
             <div className="mb-2">
-              <label className="form-label">Mainų būdas:</label>
-              <select className="form-select" value={newItemExchangeType} onChange={(e) => setNewItemExchangeType(e.target.value)}>
-                <option value="Gyvai">Gyvai</option>
-                <option value="Siuntimu">Siuntimu</option>
-                <option value="Gyvai arba siuntimu">Gyvai arba siuntimu</option>
-              </select>
+              <label className="form-label">Gamintojas (Manufacturer):</label>
+              <input type="text" className="form-control" value={manufacturer} onChange={(e) => setManufacturer(e.target.value)} placeholder="Pvz. Trek, Dell" />
             </div>
             <div className="mb-2">
-              <label className="form-label">Į ką norite išsimainyti?</label>
-              <input type="text" className="form-control" value={newItemLookingFor} onChange={(e) => setNewItemLookingFor(e.target.value)} placeholder="Pvz. Ieškau batų" />
+              <label className="form-label">Dydis (Size):</label>
+              <input type="text" className="form-control" value={size} onChange={(e) => setSize(e.target.value)} placeholder="Pvz. M, 42, 27 coliai" />
+            </div>
+            <div className="mb-2">
+              <label className="form-label">Spalva (Color):</label>
+              <input type="text" className="form-control" value={color} onChange={(e) => setColor(e.target.value)} placeholder="Pvz. Juoda, Raudona" />
             </div>
             <div className="mb-2">
               <label className="form-label">Aprašymas:</label>
-              <textarea className="form-control" rows={2} value={newItemDescription} onChange={(e) => setNewItemDescription(e.target.value)} placeholder="Būklė, dydis..."></textarea>
+              <textarea className="form-control" rows={2} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Trumpas aprašymas..."></textarea>
             </div>
-            <button className="btn btn-success w-100 mt-3" onClick={createItem}>Paskelbti mainams</button>
+            <button className="btn btn-success w-100 mt-3" onClick={createItem}>Paskelbti daiktą</button>
           </div>
         </div>
 
-        {/* Sąrašas */}
         <div className="col-md-7">
           <div className="card p-3 shadow-sm">
             <h5>Mano pasiūlymai serveryje ({serverItems.length})</h5>
@@ -122,8 +123,12 @@ export default function MyItems() {
               {serverItems.map((item) => (
                 <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center">
                   <div>
-                    <strong>{item.title}</strong>
-                    <div className="text-muted small">Būdas: {item.exchangeType} | Keičiama į: {item.lookingFor}</div>
+                    <strong>{item.name}</strong>
+                    <div className="text-muted small">
+                      {item.manufacturer && `${item.manufacturer} | `}
+                      Būklė: {item.condition}
+                      {item.size && ` | Dydis: ${item.size}`}
+                    </div>
                   </div>
                   <button className="btn btn-outline-danger btn-sm" onClick={() => deleteItem(item.id)}>Ištrinti</button>
                 </li>

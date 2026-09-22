@@ -6,9 +6,14 @@ export default function Items() {
   const [allItems, setAllItems] = useState<ItemDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCondition, setSelectedCondition] = useState("");
+
+  /* Uzkomentavau filtrus kol nera backende
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedExchangeType, setSelectedExchangeType] = useState("");
+  */
 
   useEffect(() => {
     fetch("http://localhost:5000/api/items")
@@ -27,59 +32,62 @@ export default function Items() {
   }, []);
 
   const filteredItems = allItems.filter((i) => {
-    const matchesSearch = !searchQuery || i.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = !selectedCategory || i.category === selectedCategory;
-    const matchesExchange = !selectedExchangeType || i.exchangeType.toLowerCase().includes(selectedExchangeType.toLowerCase());
-    return matchesSearch && matchesCategory && matchesExchange;
+    const matchesSearch = !searchQuery || i.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCondition = !selectedCondition || i.condition === selectedCondition;
+    return matchesSearch && matchesCondition;
   });
 
   const resetFilters = () => {
     setSearchQuery("");
-    setSelectedCategory("");
-    setSelectedExchangeType("");
+    setSelectedCondition("");
   };
 
   return (
     <div className="container mt-4">
       <div className="row">
-        {/* Filtrai */}
         <div className="col-md-3">
           <div className="card p-3 shadow-sm mb-4">
             <h5>Filtrai</h5>
             <hr />
             <div className="mb-3">
-              <label className="form-label">Paieška:</label>
+              <label className="form-label">Paieška pagal pavadinimą:</label>
               <input
                 type="text"
                 className="form-control"
-                placeholder="Ieškoti pagal pavadinimą..."
+                placeholder="Ieškoti..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
+
+            <div className="mb-3">
+              <label className="form-label">Būklė (Condition):</label>
+              <select 
+                className="form-select" 
+                value={selectedCondition} 
+                onChange={(e) => setSelectedCondition(e.target.value)}
+              >
+                <option value="">Visos būklės</option>
+                <option value="Naujas">Naujas</option>
+                <option value="Naudotas">Naudotas</option>
+              </select>
+            </div>
+
+            {/* Uzkomentavau filtrus kol nera backende
             <div className="mb-3">
               <label className="form-label">Kategorija:</label>
-              <select className="form-select" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-                <option value="">Visos kategorijos</option>
-                <option value="Transportas">Transportas</option>
-                <option value="Elektronika">Elektronika</option>
-                <option value="Knygos">Knygos</option>
-                <option value="Buitis">Buitis</option>
-              </select>
+              <select className="form-select" ...>...</select>
             </div>
             <div className="mb-3">
               <label className="form-label">Mainų būdas:</label>
-              <select className="form-select" value={selectedExchangeType} onChange={(e) => setSelectedExchangeType(e.target.value)}>
-                <option value="">Visi būdai</option>
-                <option value="Gyvai">Gyvai</option>
-                <option value="Siuntimu">Siuntimu</option>
-              </select>
+              <select className="form-select" ...>...</select>
             </div>
+            */}
+
             <button className="btn btn-outline-secondary w-100" onClick={resetFilters}>Išvalyti filtrus</button>
           </div>
         </div>
 
-        {/* Sąrašas */}
         <div className="col-md-9">
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h3>Visi siūlomi daiktai</h3>
@@ -97,19 +105,16 @@ export default function Items() {
               <div key={item.id} className="col-md-4 mb-4">
                 <div className="card h-100 shadow-sm">
                   <div style={{ height: "120px", backgroundColor: "#f8f9fa" }} className="d-flex align-items-center justify-content-center text-muted border-bottom">
-                    {item.category}
+                    {item.manufacturer || "Prekė"}
                   </div>
                   <div className="card-body d-flex flex-column">
-                    <h5 className="card-title">{item.title}</h5>
+                    <h5 className="card-title">{item.name}</h5>
                     <div className="mb-2">
-                      <span className="badge bg-secondary me-1">{item.category}</span>
-                      <span className="badge bg-info text-dark">{item.exchangeType}</span>
+                      {item.condition && <span className="badge bg-secondary me-1">{item.condition}</span>}
+                      {item.size && <span className="badge bg-info text-dark me-1">Dydis: {item.size}</span>}
                     </div>
                     <p className="card-text text-muted small flex-grow-1">{item.description}</p>
-                    <div className="bg-light p-2 rounded mb-3 small">
-                      <strong>Keičia į:</strong> {item.lookingFor}
-                    </div>
-                    <Link to={`/item/${item.id}`} className="btn btn-outline-primary btn-sm w-100">
+                    <Link to={`/item/${item.id}`} className="btn btn-outline-primary btn-sm w-100 mt-2">
                       Peržiūrėti pasiūlymą
                     </Link>
                   </div>
