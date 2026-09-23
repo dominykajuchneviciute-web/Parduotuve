@@ -10,6 +10,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddControllers();
+
 var app = builder.Build();
 
 app.UseCors("AllowAll");
@@ -46,6 +48,10 @@ app.MapDelete("/api/items/{id:int}", (int id) =>
     items.Remove(item);
     return Results.NoContent();
 });
+app.UseHsts();
+app.UseHttpsRedirection();
+
+app.MapControllers();
 
 app.Run();
 
