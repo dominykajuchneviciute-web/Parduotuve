@@ -1,4 +1,3 @@
 <Solution>
   <Project Path="EShop.Api/EShop.Api.csproj" />
-  <Project Path="EShop.Client/EShop.Client.csproj" />
 </Solution>
