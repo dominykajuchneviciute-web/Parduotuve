@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using EShop.Api.Models;
+using EShop.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -9,49 +10,23 @@ namespace EShop.Api.Controllers
     [ApiController]
     public class ItemsController : ControllerBase
     {
-        private static readonly List<Item> items = new()
+        private readonly ItemService _itemService;
+
+        public ItemsController(ItemService itemService)
         {
-            new Item(
-                "Miesto dviratis",
-                ItemCondition.Used,
-                1,
-                "Tvarkingas dviratis, paruoštas sezonui.",
-                26,
-                "Kross",
-                "Juoda"
-            ),
-
-            new Item(
-                "Dell 24\" monitorius",
-                ItemCondition.Used,
-                2,
-                "Full HD monitorius be defektų.",
-                24,
-                "Dell",
-                "Juoda"
-            ),
-
-            new Item(
-                "C# Programavimo vadovėlis",
-                ItemCondition.New,
-                3,
-                "Naudinga knyga .NET programuotojams.",
-                null,
-                "Alma littera",
-                "Mėlyna"
-            )
-        };
+            _itemService = itemService;
+        }
 
         [HttpGet]
-        public IActionResult GetItems()
+        public async Task<IActionResult<List<Item>>> GetItems()
         {
             return Ok(items);
         }
 
-        [HttpGet("{id:int}")]
-        public IActionResult GetItem(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Item>> GetItem(int id)
         {
-            var item = items.FirstOrDefault(i => i.Id == id);
+            var item = await _itemService.GetByIdAsync(id);
 
             if (item is null)
             {
@@ -62,24 +37,25 @@ namespace EShop.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateItem(Item item)
+        public async Task<ActionResult<Item>> CreateItem(Item item)
         {
-            items.Add(item);
+            var createdItem = await _itemService.AddAsync(item);
 
-            return Created($"/api/items/{item.Id}", item);
+            return CreatedAtAction(
+                nameof(GetItem),
+                new { id = createdItem.Id },
+                createdItem);
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id}")]
         public IActionResult DeleteItem(int id)
         {
-            var item = items.FirstOrDefault(i => i.Id == id);
+            var deleted = await _itemService.DeleteAsync(id);
 
-            if (item is null)
+            if (!deleted)
             {
                 return NotFound();
             }
-
-            items.Remove(item);
 
             return NoContent();
         }
