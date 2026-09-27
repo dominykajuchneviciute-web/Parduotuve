@@ -1,8 +1,7 @@
 using EShop.Api.Data;
-//using EShop.Api.Models;
+using EShop.Api.Models;
 using Microsoft.EntityFrameworkCore;
-
-//using EShop.Api.Services;
+using EShop.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

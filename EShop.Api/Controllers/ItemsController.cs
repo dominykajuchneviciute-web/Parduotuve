@@ -11,15 +11,18 @@ namespace EShop.Api.Controllers
     public class ItemsController : ControllerBase
     {
         private readonly ItemService _itemService;
+        private readonly ItemFileLoader _itemFileLoader;
 
-        public ItemsController(ItemService itemService)
+        public ItemsController(ItemService itemService, ItemFileLoader itemFileLoader)
         {
             _itemService = itemService;
+            _itemFileLoader = itemFileLoader;
         }
 
         [HttpGet]
-        public async Task<IActionResult<List<Item>>> GetItems()
+        public async Task<ActionResult<List<Item>>> GetItems()
         {
+            var items = await _itemService.GetAllAsync();
             return Ok(items);
         }
 
@@ -47,8 +50,23 @@ namespace EShop.Api.Controllers
                 createdItem);
         }
 
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadItems(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("File is empty.");
+            }
+
+            await using var stream = file.OpenReadStream();
+
+            var items = await _itemFileLoader.LoadAsync(stream);
+
+            return Ok(items);
+        }
+
         [HttpDelete("{id}")]
-        public IActionResult DeleteItem(int id)
+        public async Task<IActionResult> DeleteItem(int id)
         {
             var deleted = await _itemService.DeleteAsync(id);
 
