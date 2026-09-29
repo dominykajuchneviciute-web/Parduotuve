@@ -16,7 +16,7 @@ export default function Items() {
   */
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/items")
+     fetch("http://localhost:5145/api/items")
       .then((res) => {
         if (!res.ok) throw new Error("Klaida gaunant duomenis");
         return res.json();
@@ -26,14 +26,14 @@ export default function Items() {
         setIsLoading(false);
       })
       .catch((err) => {
-        setErrorMessage("Nepavyko pasiekti API serverio: " + err.message);
+        setErrorMessage("Nepavyko pasiekti serverio: " + err.message);
         setIsLoading(false);
       });
   }, []);
 
   const filteredItems = allItems.filter((i) => {
     const matchesSearch = !searchQuery || i.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCondition = !selectedCondition || i.condition === selectedCondition;
+      const matchesCondition = !selectedCondition || i.condition?.toString() === selectedCondition;
     return matchesSearch && matchesCondition;
   });
 
@@ -68,8 +68,12 @@ export default function Items() {
                 onChange={(e) => setSelectedCondition(e.target.value)}
               >
                 <option value="">Visos būklės</option>
-                <option value="Naujas">Naujas</option>
-                <option value="Naudotas">Naudotas</option>
+                <option value="0">Naujas</option>
+                <option value="1">Labai geras</option>
+                <option value="2">Geras</option>
+                <option value="3">Patenkinamas</option>
+                <option value="4">Naudotas</option>
+                <option value="5">Labai naudotas</option>
               </select>
             </div>
 

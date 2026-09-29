@@ -1,9 +1,9 @@
 export interface ItemDto {
   id: number;
   name: string;
-  description: string;
-  condition?: string;
-  size?: string;
+  description?: string;
+  condition?: number;
+  size?: number;
   manufacturer?: string;
   color?: string;
   // Laikinai uzkomentavau kol nera backende

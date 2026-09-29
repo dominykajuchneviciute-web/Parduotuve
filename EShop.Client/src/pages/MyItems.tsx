@@ -8,14 +8,14 @@ export default function MyItems() {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [condition, setCondition] = useState("Naudotas");
+  const [condition, setCondition] = useState("Used");
   const [size, setSize] = useState("");
   const [manufacturer, setManufacturer] = useState("");
   const [color, setColor] = useState("");
 
   const loadItems = () => {
     setIsLoading(true);
-    fetch("http://localhost:5000/api/items")
+    fetch("http://localhost:5145/api/items")
       .then((res) => res.json())
       .then((data) => {
         setServerItems(data);
@@ -31,22 +31,63 @@ export default function MyItems() {
     loadItems();
   }, []);
 
-  const createItem = async () => {
-    if (!name.trim()) {
-      setStatusMessage("Nurodykite daikto pavadinimą!");
-      return;
-    }
+    const createItem = async () => {
+        if (!name.trim()) {
+            setStatusMessage("Nurodykite daikto pavadinimą!");
+            return;
+        }
 
-    const payload = {
-      name,
-      description,
-      condition,
-      size,
-      manufacturer,
-      color
+        const payload = {
+            name,
+            description,
+            condition,
+            size: size ? Number(size) : null,
+            manufacturer,
+            color
+        };
+
+        try {
+            const res = await fetch("http://localhost:5145/api/items", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            /*if (!res.ok) {
+                const errorText = await res.text();
+                console.error("POST klaida:", errorText);
+                setStatusMessage("Nepavyko pridėti daikto.");
+                return;
+            }*/
+            if (!res.ok) {
+                const errorText = await res.text();
+
+                setStatusMessage(
+                    `Klaida (${res.status}): ${errorText}`
+                );
+
+                console.log("POST klaida:", res.status, errorText);
+                return;
+            }
+
+            setStatusMessage("Daiktas sėkmingai pridėtas!");
+
+            setName("");
+            setDescription("");
+            setSize("");
+            setManufacturer("");
+            setColor("");
+
+            loadItems();
+        } catch (error) {
+            console.error(error);
+            setStatusMessage("Nepavyko pasiekti API.");
+        }
     };
 
-    const res = await fetch("http://localhost:5000/api/items", {
+    /*const res = await fetch("http://localhost:5145/api/items", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -61,10 +102,10 @@ export default function MyItems() {
       setColor("");
       loadItems();
     }
-  };
+  };*/
 
   const deleteItem = async (id: number) => {
-    const res = await fetch(`http://localhost:5000/api/items/${id}`, { method: "DELETE" });
+    const res = await fetch(`http://localhost:5145/api/items/${id}`, { method: "DELETE" });
     if (res.ok) {
       setStatusMessage("Skelbimas pašalintas!");
       loadItems();
@@ -88,10 +129,18 @@ export default function MyItems() {
             </div>
             <div className="mb-2">
               <label className="form-label">Būklė (Condition):</label>
-              <select className="form-select" value={condition} onChange={(e) => setCondition(e.target.value)}>
-                <option value="Naujas">Naujas</option>
-                <option value="Naudotas">Naudotas</option>
-              </select>
+            < select
+                className = "form-select"
+                value = { condition }
+                onChange = {(e) => setCondition(e.target.value)}
+                >
+                <option value="New">Naujas</option>
+                <option value="VeryGood">Labai gera</option>
+                <option value="Good">Gera</option>
+                <option value="Decent">Patenkinama</option>
+                <option value="Used">Naudotas</option>
+                <option value="VeryUsed">Labai naudotas</option>
+                </select>
             </div>
             <div className="mb-2">
               <label className="form-label">Gamintojas (Manufacturer):</label>
@@ -99,7 +148,7 @@ export default function MyItems() {
             </div>
             <div className="mb-2">
               <label className="form-label">Dydis (Size):</label>
-              <input type="text" className="form-control" value={size} onChange={(e) => setSize(e.target.value)} placeholder="Pvz. M, 42, 27 coliai" />
+              <input type="text" className="form-control" value={size} onChange={(e) => setSize(e.target.value)} placeholder="Pvz. 42" />
             </div>
             <div className="mb-2">
               <label className="form-label">Spalva (Color):</label>
