@@ -40,8 +40,12 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors("ReactApp");
-app.UseHsts();
-app.UseHttpsRedirection();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
