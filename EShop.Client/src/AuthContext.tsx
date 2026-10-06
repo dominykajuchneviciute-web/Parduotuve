@@ -9,10 +9,22 @@ type AuthContextType = {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<string | null>;
+  register: (email: string, password: string) => Promise<string | null>;
   logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
+
+const errorMessages: Record<string, string> = {
+  DuplicateUserName: "Vartotojas su tokiu el. paštu jau egzistuoja.",
+  DuplicateEmail: "Vartotojas su tokiu el. paštu jau egzistuoja.",
+  InvalidEmail: "Neteisingas el. pašto formatas.",
+  PasswordTooShort: "Slaptažodis turi būti bent 6 simbolių ilgio.",
+  PasswordRequiresDigit: "Slaptažodyje turi būti bent vienas skaitmuo.",
+  PasswordRequiresLower: "Slaptažodyje turi būti bent viena mažoji raidė.",
+  PasswordRequiresUpper: "Slaptažodyje turi būti bent viena didžioji raidė.",
+  PasswordRequiresNonAlphanumeric: "Slaptažodyje turi būti bent vienas simbolis (pvz., !).",
+};
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -56,6 +68,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // Returns error if registration failed, null if it worked
+  async function register(email: string, password: string) {
+    try {
+      const res = await fetch(`${API}/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        const codes = data?.errors ? Object.keys(data.errors) : [];
+        if (codes.length > 0) {
+          return codes
+            .map((code) => errorMessages[code] ?? data.errors[code][0])
+            .join(" ");
+        }
+        return "Registracija nepavyko.";
+      }
+      // Registration worked
+      return await login(email, password);
+    } catch {
+      return "Nepavyko prisijungti prie serverio.";
+    }
+  }
+
   async function logout() {
     try {
       await fetch(`${API}/logout`, {
@@ -68,7 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
