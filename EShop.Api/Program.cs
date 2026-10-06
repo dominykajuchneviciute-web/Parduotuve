@@ -28,9 +28,10 @@ builder.Services.AddScoped<ItemFileLoader>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("ReactApp", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:5173")
+              .AllowCredentials()
               .AllowAnyMethod()
               .AllowAnyHeader();
     });
@@ -38,7 +39,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseCors("AllowAll");
+app.UseCors("ReactApp");
 app.UseHsts();
 app.UseHttpsRedirection();
 
