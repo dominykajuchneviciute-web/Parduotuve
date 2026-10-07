@@ -1,6 +1,15 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 
 export default function NavMenu() {
+  const { user, loading, logout } = useAuth();
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    await logout();
+    navigate("/");
+  }
+
   return (
     <header className="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-2 mb-4 shadow-sm">
       <div className="container-fluid d-flex justify-content-between align-items-center">
@@ -27,12 +36,25 @@ export default function NavMenu() {
           >
             Mano daiktai
           </NavLink>
-          <NavLink 
-            to="/login" 
-            className={({ isActive }) => `nav-link px-3 py-1 rounded ${isActive ? "active text-white" : "text-white-50"}`}
-          >
-            Prisijungti
-          </NavLink>
+
+          {!loading && (user ? (
+            <>
+              <span className="text-white-50 align-self-center small">{user.email}</span>
+              <button
+                onClick={handleLogout}
+                className="nav-link px-3 py-1 rounded text-white-50 border-0 bg-transparent"
+              >
+                Atsijungti
+              </button>
+            </>
+          ) : (
+            <NavLink 
+              to="/login" 
+              className={({ isActive }) => `nav-link px-3 py-1 rounded ${isActive ? "active text-white" : "text-white-50"}`}
+            >
+              Prisijungti
+            </NavLink>
+          ))}
         </nav>
       </div>
 
