@@ -60,6 +60,3 @@ auth.MapPost("/logout", async (SignInManager<IdentityUser> signInManager) =>
 
 app.MapControllers();
 app.Run();
-
-//public record ItemDto(int Id, string Name, string Description, string? Condition, string? Size, string? Manufacturer, string? Color);
-//public record CreateItemRequest(string Name, string Description, string? Condition, string? Size, string? Manufacturer, string? Color);

@@ -134,7 +134,7 @@ export default function MyItems() {
                 value = { condition }
                 onChange = {(e) => setCondition(e.target.value)}
                 >
-                <option value="New">Naujas</option>
+                <option value="New">New</option>
                 <option value="VeryGood">Labai gera</option>
                 <option value="Good">Gera</option>
                 <option value="Decent">Patenkinama</option>

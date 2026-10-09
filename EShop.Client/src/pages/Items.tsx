@@ -10,11 +10,6 @@ export default function Items() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCondition, setSelectedCondition] = useState("");
 
-  /* Uzkomentavau filtrus kol nera backende
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedExchangeType, setSelectedExchangeType] = useState("");
-  */
-
   useEffect(() => {
      fetch("http://localhost:5145/api/items")
       .then((res) => {
