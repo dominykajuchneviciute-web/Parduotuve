@@ -40,8 +40,95 @@ namespace EShop.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Item>> CreateItem(Item item)
+        public async Task<ActionResult<Item>> CreateItem(CreateItemRequest request)
         {
+            if (string.IsNullOrWhiteSpace(request.Name))
+            {
+                return BadRequest("Prekės pavadinimas yra privalomas.");
+            }
+
+            Item item;
+
+            switch (request.Category.Trim().ToLowerInvariant())
+            {
+                case "clothing":
+                    item = new Clothing
+                    {
+                        Name = request.Name,
+                        Condition = request.Condition,
+                        Description = request.Description,
+                        Size = request.Size,
+                        Color = request.Color,
+                        Manufacturer = request.Manufacturer
+                    };
+                    break;
+
+                case "electronics":
+                    item = new Electronics
+                    {
+                        Name = request.Name,
+                        Condition = request.Condition,
+                        Description = request.Description,
+                        Model = request.Model,
+                        Color = request.Color,
+                        Manufacturer = request.Manufacturer
+                    };
+                    break;
+
+                case "furniture":
+                    item = new Furniture
+                    {
+                        Name = request.Name,
+                        Condition = request.Condition,
+                        Description = request.Description,
+                        Material = request.Material,
+                        Color = request.Color,
+                        Dimensions = request.Dimensions
+                    };
+                    break;
+
+                case "transport":
+                    item = new Transport
+                    {
+                        Name = request.Name,
+                        Condition = request.Condition,
+                        Description = request.Description,
+                        Manufacturer = request.Manufacturer,
+                        Model = request.Model,
+                        Year = request.Year,
+                    };
+                    break;
+
+                case "footwear":
+                    item = new Footwear
+                    {
+                        Name = request.Name,
+                        Condition = request.Condition,
+                        Description = request.Description,
+                        ShoeSize = request.ShoeSize,
+                        Color = request.Color,
+                        Manufacturer = request.Manufacturer
+                    };
+                    break;
+
+                case "instrument":
+                    item = new Instrument
+                    {
+                        Name = request.Name,
+                        Condition = request.Condition,
+                        Description = request.Description,
+                        InstrumentType = request.InstrumentType,
+                        Manufacturer = request.Manufacturer,
+                        Year = request.Year
+                    };
+                    break;
+
+                default:
+                    return BadRequest(
+                        "Nežinoma prekės kategorija. " +
+                        "Galimos kategorijos: Clothing, Electronics, Furniture, Transport, Footwear, Instrument.");
+            }
+
             var createdItem = await _itemService.AddAsync(item);
 
             return CreatedAtAction(

@@ -26,17 +26,52 @@ export default function Items() {
       });
   }, []);
 
-  const filteredItems = allItems.filter((i) => {
-    const matchesSearch = !searchQuery || i.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCondition = !selectedCondition || i.condition?.toString() === selectedCondition;
-    return matchesSearch && matchesCondition;
-  });
+    const conditionLabels: Record<string, string> = {
+        "0": "New",
+        "1": "VeryGood",
+        "2": "Good",
+        "3": "Decent",
+        "4": "Used",
+        "5": "VeryUsed",
+    };
+
+    const filteredItems = allItems.filter((i) => {
+        const matchesSearch =
+            !searchQuery ||
+            i.name.toLowerCase().includes(searchQuery.toLowerCase());
+
+        const expectedCondition = conditionLabels[selectedCondition];
+
+        const matchesCondition =
+            !selectedCondition ||
+            i.condition?.toString() === selectedCondition ||
+            i.condition?.toString() === expectedCondition;
+
+        return matchesSearch && matchesCondition;
+    });
 
   const resetFilters = () => {
     setSearchQuery("");
     setSelectedCondition("");
   };
-
+    const getCategoryLabel = (item: ItemDto): string => {
+        switch (item.itemType) {
+            case "Clothing":
+                return "Drabužiai";
+            case "Electronics":
+                return "Elektronika";
+            case "Furniture":
+                return "Baldai";
+            case "Transport":
+                return "Transportas";
+            case "Footwear":
+                return "Avalynė";
+            case "Instrument":
+                return "Muzikos instrumentai";
+            default:
+                return "Daiktas";
+        }
+    };
   return (
     <div className="container mt-4">
       <div className="row">
@@ -107,12 +142,97 @@ export default function Items() {
                     {item.manufacturer || "Prekė"}
                   </div>
                   <div className="card-body d-flex flex-column">
-                    <h5 className="card-title">{item.name}</h5>
-                    <div className="mb-2">
-                      {item.condition && <span className="badge bg-secondary me-1">{item.condition}</span>}
-                      {item.size && <span className="badge bg-info text-dark me-1">Dydis: {item.size}</span>}
+                    <h5 className="card-title" > { item.name } </h5>
+
+                        < div className = "mb-2" >
+                            <span className="badge bg-primary me-1" >
+                            { getCategoryLabel(item) }
+                                </span>
+
+                    {
+                        item.condition != null && (
+                            <span className="badge bg-secondary me-1" >
+                            { item.condition }
+                                </span>
+                      )
+                    }
+
+                    {
+                        item.size != null && (
+                            <span className="badge bg-info text-dark me-1" >
+                                Dydis: { item.size }
+                        </span>
+                      )
+                    }
+
+                    {
+                        item.shoeSize != null && (
+                            <span className="badge bg-info text-dark me-1" >
+                                Avalynės dydis: { item.shoeSize }
+                        </span>
+                      )
+                    }
                     </div>
-                    <p className="card-text text-muted small flex-grow-1">{item.description}</p>
+
+                    {
+                        item.manufacturer && (
+                            <p className="small mb-1" >
+                                Gamintojas: { item.manufacturer }
+                        </p>
+                    )
+                    }
+
+                    {
+                        item.color && (
+                            <p className="small mb-1" >
+                                Spalva: { item.color }
+                        </p>
+                    )
+                    }
+
+                    {
+                        item.model && (
+                            <p className="small mb-1" >
+                                Modelis: { item.model }
+                        </p>
+                    )
+                    }
+
+                    {
+                        item.material && (
+                            <p className="small mb-1" >
+                                Medžiaga: { item.material }
+                        </p>
+                    )
+                    }
+
+                    {
+                        item.dimensions && (
+                            <p className="small mb-1" >
+                                Matmenys: { item.dimensions }
+                        </p>
+                    )
+                    }
+
+                    {
+                        item.year != null && (
+                            <p className="small mb-1" >
+                                Metai: { item.year }
+                        </p>
+                    )
+                    }
+
+                    {
+                        item.instrumentType && (
+                            <p className="small mb-1" >
+                                Instrumento tipas: { item.instrumentType }
+                        </p>
+                    )
+                    }
+
+                    <p className="card-text text-muted small flex-grow-1" >
+                    { item.description }
+                        </p>
                     <Link to={`/item/${item.id}`} className="btn btn-outline-primary btn-sm w-100 mt-2">
                       Peržiūrėti pasiūlymą
                     </Link>
