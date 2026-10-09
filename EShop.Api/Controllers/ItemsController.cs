@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Http;
 using EShop.Api.Models;
+using EShop.Api.Models.Items;
 using EShop.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using EShop.Api.DTOs;
 
 
 namespace EShop.Api.Controllers

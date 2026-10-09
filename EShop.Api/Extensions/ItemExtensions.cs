@@ -15,21 +15,6 @@ public static class ItemExtensions
         {
             return false;
         }
-
-        if (filter.Size != null && item.Size != filter.Size)
-        {
-            return false;
-        }
-
-        if (filter.Manufacturer != null && !string.Equals(item.Manufacturer, filter.Manufacturer, StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        if (filter.Color != null && !string.Equals(item.Color, filter.Color, StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
         return true;
     }
 }

@@ -2,7 +2,7 @@ namespace EShop.Api.Models;
 
 public abstract class Item
 {
-    public string Name {get; set;}
+    public string Name {get; set;} = string.Empty;
     public ItemCondition Condition {get; set;}
     public int Id { get; set; }
     public string? Description {get; set;}
