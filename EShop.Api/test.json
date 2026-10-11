@@ -1,0 +1,9 @@
+[
+  {
+    "itemType": "Clothing",
+    "id": 1,
+    "name": "Testiniai marskineliai",
+    "condition": "Used",
+    "description": "ItemFileLoader testas"
+  }
+]
