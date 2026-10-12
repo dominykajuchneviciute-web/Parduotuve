@@ -50,13 +50,8 @@ if (!app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-var auth = app.MapGroup("/api/auth");
+var auth = app.MapGroup("/api/auth");//this has to stay
 auth.MapIdentityApi<IdentityUser>();
-auth.MapPost("/logout", async (SignInManager<IdentityUser> signInManager) =>
-{
-    await signInManager.SignOutAsync();
-    return Results.Ok();
-}).RequireAuthorization();
 
 app.MapControllers();
 app.Run();
