@@ -83,7 +83,8 @@ public async Task<ActionResult<Item>> CreateItem(Item item)
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItem(int id)
         {
-            var deleted = await _itemService.DeleteAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var deleted = await _itemService.DeleteAsync(id, userId!);
 
             if (!deleted)
             {

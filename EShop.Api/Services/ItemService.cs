@@ -39,10 +39,10 @@ public class ItemService
         return item;
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id, string ownerId)
     {
         var item = await _context.Items
-            .FirstOrDefaultAsync(item => item.Id == id);
+            .FirstOrDefaultAsync(item => item.Id == id && item.OwnerId == ownerId);
 
         if (item == null)
         {
