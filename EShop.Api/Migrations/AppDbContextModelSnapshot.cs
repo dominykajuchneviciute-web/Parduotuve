@@ -46,6 +46,9 @@ namespace EShop.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("text");
+
                     b.Property<int?>("Size")
                         .HasColumnType("integer");
 

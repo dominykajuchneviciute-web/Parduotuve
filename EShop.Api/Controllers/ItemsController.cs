@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Http;
 using EShop.Api.Models;
 using EShop.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace EShop.Api.Controllers
@@ -26,6 +28,15 @@ namespace EShop.Api.Controllers
             return Ok(items);
         }
 
+        [Authorize]
+        [HttpGet("mine")]
+        public async Task<ActionResult<List<Item>>> GetMyItems()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var items = await _itemService.GetByOwnerAsync(userId!);
+            return Ok(items);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Item>> GetItem(int id)
         {
@@ -39,16 +50,20 @@ namespace EShop.Api.Controllers
             return Ok(item);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Item>> CreateItem(Item item)
-        {
-            var createdItem = await _itemService.AddAsync(item);
+[Authorize]
+[HttpPost]
+public async Task<ActionResult<Item>> CreateItem(Item item)
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    item.OwnerId = userId;
 
-            return CreatedAtAction(
-                nameof(GetItem),
-                new { id = createdItem.Id },
-                createdItem);
-        }
+    var createdItem = await _itemService.AddAsync(item);
+
+    return CreatedAtAction(
+        nameof(GetItem),
+        new { id = createdItem.Id },
+        createdItem);
+}
 
         [HttpPost("upload")]
         public async Task<IActionResult> UploadItems(IFormFile file)

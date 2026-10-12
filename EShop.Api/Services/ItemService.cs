@@ -24,6 +24,13 @@ public class ItemService
             .FirstOrDefaultAsync(item => item.Id == id);
     }
 
+    public async Task<List<Item>> GetByOwnerAsync(string ownerId)
+    {
+        return await _context.Items
+            .Where(item => item.OwnerId == ownerId)
+            .ToListAsync();
+    }
+
     public async Task<Item> AddAsync(Item item)
     {
         _context.Items.Add(item);

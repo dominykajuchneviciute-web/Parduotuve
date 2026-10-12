@@ -2,6 +2,7 @@ namespace EShop.Api.Models;
 
 public class Item
 {
+    public string? OwnerId { get; set; }
     public string Name {get; set;}
     public ItemCondition Condition {get; set;}
     public int Id { get; set; }
