@@ -42,6 +42,13 @@ export default function Items() {
 
   const [filters, setFilters] = useState<ItemFilterState>(emptyFilters);
 
+  const updateFilter = <Key extends keyof ItemFilterState>(
+    key: Key,
+    value: ItemFilterState[Key],
+  ) => {
+    setFilters((current) => ({ ...current, [key]: value }));
+  };
+
   useEffect(() => {
      fetch("http://localhost:5145/api/items")
       .then((res) => {
@@ -90,12 +97,7 @@ export default function Items() {
                 className="form-control"
                 placeholder="Ieškoti..."
                 value={filters.searchQuery}
-                onChange={(e) =>
-                  setFilters((current) => ({
-                    ...current,
-                    searchQuery: e.target.value,
-                  }))
-                }
+                onChange={(e) => updateFilter("searchQuery", e.target.value)}
               />
             </div>
 
@@ -105,10 +107,7 @@ export default function Items() {
                 className="form-select" 
                 value={filters.selectedCondition}
                 onChange={(e) =>
-                  setFilters((current) => ({
-                    ...current,
-                    selectedCondition: e.target.value,
-                  }))
+                  updateFilter("selectedCondition", e.target.value)
                 }
               >
                 <option value="">Visos būklės</option>
@@ -120,16 +119,236 @@ export default function Items() {
               </select>
             </div>
 
-            {/* Uzkomentavau filtrus kol nera backende
             <div className="mb-3">
               <label className="form-label">Kategorija:</label>
-              <select className="form-select" ...>...</select>
+              <select
+                className="form-select"
+                value={filters.selectedCategory}
+                onChange={(e) =>
+                  updateFilter(
+                    "selectedCategory",
+                    e.target.value as ItemCategory | "",
+                  )
+                }
+              >
+                <option value="">Visos kategorijos</option>
+                {Object.entries(categoryLabels).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
             </div>
-            <div className="mb-3">
-              <label className="form-label">Mainų būdas:</label>
-              <select className="form-select" ...>...</select>
-            </div>
-            */}
+
+            {filters.selectedCategory === "Clothing" && (
+              <>
+                <div className="mb-3">
+                  <label className="form-label">Dydis:</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    min="0"
+                    value={filters.size}
+                    onChange={(e) => updateFilter("size", e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Spalva:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filters.color}
+                    onChange={(e) => updateFilter("color", e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Gamintojas:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filters.manufacturer}
+                    onChange={(e) =>
+                      updateFilter("manufacturer", e.target.value)
+                    }
+                  />
+                </div>
+              </>
+            )}
+
+            {filters.selectedCategory === "Electronics" && (
+              <>
+                <div className="mb-3">
+                  <label className="form-label">Gamintojas:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filters.manufacturer}
+                    onChange={(e) =>
+                      updateFilter("manufacturer", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Modelis:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filters.model}
+                    onChange={(e) => updateFilter("model", e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Spalva:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filters.color}
+                    onChange={(e) => updateFilter("color", e.target.value)}
+                  />
+                </div>
+              </>
+            )}
+
+            {filters.selectedCategory === "Furniture" && (
+              <>
+                <div className="mb-3">
+                  <label className="form-label">Medžiaga:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filters.material}
+                    onChange={(e) => updateFilter("material", e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Spalva:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filters.color}
+                    onChange={(e) => updateFilter("color", e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Matmenys:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filters.dimensions}
+                    onChange={(e) =>
+                      updateFilter("dimensions", e.target.value)
+                    }
+                  />
+                </div>
+              </>
+            )}
+
+            {filters.selectedCategory === "Transport" && (
+              <>
+                <div className="mb-3">
+                  <label className="form-label">Gamintojas:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filters.manufacturer}
+                    onChange={(e) =>
+                      updateFilter("manufacturer", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Modelis:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filters.model}
+                    onChange={(e) => updateFilter("model", e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Metai:</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    min="0"
+                    value={filters.year}
+                    onChange={(e) => updateFilter("year", e.target.value)}
+                  />
+                </div>
+              </>
+            )}
+
+            {filters.selectedCategory === "Footwear" && (
+              <>
+                <div className="mb-3">
+                  <label className="form-label">Avalynės dydis:</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    min="0"
+                    value={filters.shoeSize}
+                    onChange={(e) => updateFilter("shoeSize", e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Spalva:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filters.color}
+                    onChange={(e) => updateFilter("color", e.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Gamintojas:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filters.manufacturer}
+                    onChange={(e) =>
+                      updateFilter("manufacturer", e.target.value)
+                    }
+                  />
+                </div>
+              </>
+            )}
+
+            {filters.selectedCategory === "Instrument" && (
+              <>
+                <div className="mb-3">
+                  <label className="form-label">Instrumento tipas:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filters.instrumentType}
+                    onChange={(e) =>
+                      updateFilter("instrumentType", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Gamintojas:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={filters.manufacturer}
+                    onChange={(e) =>
+                      updateFilter("manufacturer", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Metai:</label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    min="0"
+                    value={filters.year}
+                    onChange={(e) => updateFilter("year", e.target.value)}
+                  />
+                </div>
+              </>
+            )}
 
             <button className="btn btn-outline-secondary w-100" onClick={resetFilters}>Išvalyti filtrus</button>
           </div>
