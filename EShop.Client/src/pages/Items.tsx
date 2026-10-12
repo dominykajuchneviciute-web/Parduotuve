@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import type { ItemCategory, ItemDto, ItemFilterState } from "../types";
+import { matchesItemFilters } from "../utils/itemFilters";
 
 const categoryLabels: Record<ItemCategory, string> = {
   Clothing: "Drabužiai",
@@ -65,17 +66,9 @@ export default function Items() {
       });
   }, []);
 
-    const filteredItems = allItems.filter((i) => {
-        const matchesSearch =
-            !filters.searchQuery ||
-            i.name.toLowerCase().includes(filters.searchQuery.toLowerCase());
-
-        const matchesCondition =
-            !filters.selectedCondition ||
-            i.condition?.toString() === filters.selectedCondition;
-
-        return matchesSearch && matchesCondition;
-    });
+  const filteredItems = allItems.filter((item) =>
+    matchesItemFilters(item, filters),
+  );
 
   const resetFilters = () => {
     setFilters(emptyFilters);
