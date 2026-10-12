@@ -30,28 +30,28 @@ namespace EShop.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Color")
-                        .HasColumnType("text");
-
                     b.Property<int>("Condition")
                         .HasColumnType("integer");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<string>("Manufacturer")
-                        .HasColumnType("text");
+                    b.Property<string>("ItemType")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("Size")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.ToTable("Items");
+
+                    b.HasDiscriminator<string>("ItemType").HasValue("Item");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -248,6 +248,144 @@ namespace EShop.Api.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("EShop.Api.Models.Items.Clothing", b =>
+                {
+                    b.HasBaseType("EShop.Api.Models.Item");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Manufacturer")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Size")
+                        .HasColumnType("integer");
+
+                    b.HasDiscriminator().HasValue("Clothing");
+                });
+
+            modelBuilder.Entity("EShop.Api.Models.Items.Electronics", b =>
+                {
+                    b.HasBaseType("EShop.Api.Models.Item");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Manufacturer")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Model")
+                        .HasColumnType("text");
+
+                    b.ToTable("Items", t =>
+                        {
+                            t.Property("Color")
+                                .HasColumnName("Electronics_Color");
+
+                            t.Property("Manufacturer")
+                                .HasColumnName("Electronics_Manufacturer");
+                        });
+
+                    b.HasDiscriminator().HasValue("Electronics");
+                });
+
+            modelBuilder.Entity("EShop.Api.Models.Items.Footwear", b =>
+                {
+                    b.HasBaseType("EShop.Api.Models.Item");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Manufacturer")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ShoeSize")
+                        .HasColumnType("integer");
+
+                    b.ToTable("Items", t =>
+                        {
+                            t.Property("Color")
+                                .HasColumnName("Footwear_Color");
+
+                            t.Property("Manufacturer")
+                                .HasColumnName("Footwear_Manufacturer");
+                        });
+
+                    b.HasDiscriminator().HasValue("Footwear");
+                });
+
+            modelBuilder.Entity("EShop.Api.Models.Items.Furniture", b =>
+                {
+                    b.HasBaseType("EShop.Api.Models.Item");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Dimensions")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Material")
+                        .HasColumnType("text");
+
+                    b.ToTable("Items", t =>
+                        {
+                            t.Property("Color")
+                                .HasColumnName("Furniture_Color");
+                        });
+
+                    b.HasDiscriminator().HasValue("Furniture");
+                });
+
+            modelBuilder.Entity("EShop.Api.Models.Items.Instrument", b =>
+                {
+                    b.HasBaseType("EShop.Api.Models.Item");
+
+                    b.Property<string>("InstrumentType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Manufacturer")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Year")
+                        .HasColumnType("integer");
+
+                    b.ToTable("Items", t =>
+                        {
+                            t.Property("Manufacturer")
+                                .HasColumnName("Instrument_Manufacturer");
+                        });
+
+                    b.HasDiscriminator().HasValue("Instrument");
+                });
+
+            modelBuilder.Entity("EShop.Api.Models.Items.Transport", b =>
+                {
+                    b.HasBaseType("EShop.Api.Models.Item");
+
+                    b.Property<string>("Manufacturer")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Model")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Year")
+                        .HasColumnType("integer");
+
+                    b.ToTable("Items", t =>
+                        {
+                            t.Property("Manufacturer")
+                                .HasColumnName("Transport_Manufacturer");
+
+                            t.Property("Model")
+                                .HasColumnName("Transport_Model");
+
+                            t.Property("Year")
+                                .HasColumnName("Transport_Year");
+                        });
+
+                    b.HasDiscriminator().HasValue("Transport");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
