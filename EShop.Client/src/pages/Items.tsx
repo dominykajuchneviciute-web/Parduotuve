@@ -1,14 +1,46 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import type { ItemDto } from "../types";
+import type { ItemCategory, ItemDto, ItemFilterState } from "../types";
+
+const categoryLabels: Record<ItemCategory, string> = {
+  Clothing: "Drabužiai",
+  Electronics: "Elektronika",
+  Furniture: "Baldai",
+  Transport: "Transportas",
+  Footwear: "Avalynė",
+  Instrument: "Muzikos instrumentai",
+};
+
+const conditionOptions = [
+  { value: "0", label: "Naujas" },
+  { value: "1", label: "Labai geras" },
+  { value: "2", label: "Geras" },
+  { value: "3", label: "Patenkinamas" },
+  { value: "4", label: "Naudotas" },
+  { value: "5", label: "Labai naudotas" },
+];
+
+const emptyFilters: ItemFilterState = {
+  searchQuery: "",
+  selectedCondition: "",
+  selectedCategory: "",
+  manufacturer: "",
+  model: "",
+  color: "",
+  material: "",
+  dimensions: "",
+  instrumentType: "",
+  size: "",
+  shoeSize: "",
+  year: "",
+};
 
 export default function Items() {
   const [allItems, setAllItems] = useState<ItemDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCondition, setSelectedCondition] = useState("");
+
+  const [filters, setFilters] = useState<ItemFilterState>(emptyFilters);
 
   useEffect(() => {
      fetch("http://localhost:5145/api/items")
@@ -26,52 +58,24 @@ export default function Items() {
       });
   }, []);
 
-    const conditionLabels: Record<string, string> = {
-        "0": "New",
-        "1": "VeryGood",
-        "2": "Good",
-        "3": "Decent",
-        "4": "Used",
-        "5": "VeryUsed",
-    };
-
     const filteredItems = allItems.filter((i) => {
         const matchesSearch =
-            !searchQuery ||
-            i.name.toLowerCase().includes(searchQuery.toLowerCase());
-
-        const expectedCondition = conditionLabels[selectedCondition];
+            !filters.searchQuery ||
+            i.name.toLowerCase().includes(filters.searchQuery.toLowerCase());
 
         const matchesCondition =
-            !selectedCondition ||
-            i.condition?.toString() === selectedCondition ||
-            i.condition?.toString() === expectedCondition;
+            !filters.selectedCondition ||
+            i.condition?.toString() === filters.selectedCondition;
 
         return matchesSearch && matchesCondition;
     });
 
   const resetFilters = () => {
-    setSearchQuery("");
-    setSelectedCondition("");
+    setFilters(emptyFilters);
   };
-    const getCategoryLabel = (item: ItemDto): string => {
-        switch (item.itemType) {
-            case "Clothing":
-                return "Drabužiai";
-            case "Electronics":
-                return "Elektronika";
-            case "Furniture":
-                return "Baldai";
-            case "Transport":
-                return "Transportas";
-            case "Footwear":
-                return "Avalynė";
-            case "Instrument":
-                return "Muzikos instrumentai";
-            default:
-                return "Daiktas";
-        }
-    };
+
+  const getCategoryLabel = (item: ItemDto): string =>
+    item.itemType ? categoryLabels[item.itemType] : "Daiktas";
   return (
     <div className="container mt-4">
       <div className="row">
@@ -85,8 +89,13 @@ export default function Items() {
                 type="text"
                 className="form-control"
                 placeholder="Ieškoti..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={filters.searchQuery}
+                onChange={(e) =>
+                  setFilters((current) => ({
+                    ...current,
+                    searchQuery: e.target.value,
+                  }))
+                }
               />
             </div>
 
@@ -94,16 +103,20 @@ export default function Items() {
               <label className="form-label">Būklė (Condition):</label>
               <select 
                 className="form-select" 
-                value={selectedCondition} 
-                onChange={(e) => setSelectedCondition(e.target.value)}
+                value={filters.selectedCondition}
+                onChange={(e) =>
+                  setFilters((current) => ({
+                    ...current,
+                    selectedCondition: e.target.value,
+                  }))
+                }
               >
                 <option value="">Visos būklės</option>
-                <option value="0">Naujas</option>
-                <option value="1">Labai geras</option>
-                <option value="2">Geras</option>
-                <option value="3">Patenkinamas</option>
-                <option value="4">Naudotas</option>
-                <option value="5">Labai naudotas</option>
+                {conditionOptions.map((condition) => (
+                  <option key={condition.value} value={condition.value}>
+                    {condition.label}
+                  </option>
+                ))}
               </select>
             </div>
 
