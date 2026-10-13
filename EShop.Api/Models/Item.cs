@@ -1,28 +1,34 @@
+using System.Text.Json.Serialization;
+using EShop.Api.Models.Items;
+
+
 namespace EShop.Api.Models;
 
-public class Item
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "itemType")]
+[JsonDerivedType(typeof(Clothing), "Clothing")]
+[JsonDerivedType(typeof(Electronics), "Electronics")]
+[JsonDerivedType(typeof(Furniture), "Furniture")]
+[JsonDerivedType(typeof(Transport), "Transport")]
+[JsonDerivedType(typeof(Footwear), "Footwear")]
+[JsonDerivedType(typeof(Instrument), "Instrument")]
+
+public abstract class Item
 {
     public string? OwnerId { get; set; }
-    public string Name {get; set;}
+    public string Name {get; set;} = string.Empty;
     public ItemCondition Condition {get; set;}
     public int Id { get; set; }
     public string? Description {get; set;}
-    public int? Size {get; set;}
-    public string? Manufacturer {get; set;}
-    public string? Color {get; set;}
-
+    
     public Item()
     {
     }
 
-    public Item (string name, ItemCondition condition, string? description = null, int? size = null, string? manufacturer = null, string? color = null)
+    public Item (string name, ItemCondition condition, string? description = null)
     {
         Name = name;
         Condition = condition;
         Description = description;
-        Size = size;
-        Manufacturer = manufacturer;
-        Color = color;
     }
 
 }
