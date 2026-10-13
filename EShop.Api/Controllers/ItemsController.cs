@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using EShop.Api.Models;
 using EShop.Api.Models.Items;
 using EShop.Api.Services;
