@@ -22,8 +22,13 @@ export default function MyItems() {
 
   const loadItems = () => {
     setIsLoading(true);
-    fetch("http://localhost:5145/api/items")
-      .then((res) => res.json())
+    fetch("http://localhost:5145/api/items/mine", { credentials: "include" })
+      .then((res) => {
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+      return res.json();
+    })
       .then((data) => {
         setServerItems(data);
         setIsLoading(false);
@@ -70,6 +75,7 @@ export default function MyItems() {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: "include",
                 body: JSON.stringify(payload)
             });
 
@@ -100,7 +106,7 @@ export default function MyItems() {
     };
 
   const deleteItem = async (id: number) => {
-    const res = await fetch(`http://localhost:5145/api/items/${id}`, { method: "DELETE" });
+    const res = await fetch(`http://localhost:5145/api/items/${id}`, { method: "DELETE", credentials: "include",});
     if (res.ok) {
       setStatusMessage("Skelbimas pašalintas!");
       loadItems();
