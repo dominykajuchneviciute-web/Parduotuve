@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using EShop.Api.Models;
 using EShop.Api.Models.Items;
-
 namespace EShop.Api.Data;
 
 public class AppDbContext : IdentityDbContext<IdentityUser>
@@ -14,6 +13,8 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     }
 
     public DbSet<Item> Items => Set<Item>();
+
+    public DbSet<ItemLike> ItemLikes => Set<ItemLike>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

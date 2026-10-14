@@ -25,6 +25,7 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddEntityFrameworkStores<AppDbContext>();
 builder.Services.AddScoped<ItemService>();
 builder.Services.AddScoped<ItemFileLoader>();
+builder.Services.AddScoped<CommentLikeService>();
 
 builder.Services.AddCors(options =>
 {
