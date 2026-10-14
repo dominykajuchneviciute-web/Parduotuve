@@ -1,11 +1,10 @@
-using Microsoft.AspNetCore.Http;
 using EShop.Api.Models;
 using EShop.Api.Models.Items;
 using EShop.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using EShop.Api.DTOs;
+using EShop.Api.DTO;
 
 
 namespace EShop.Api.Controllers
@@ -148,11 +147,11 @@ namespace EShop.Api.Controllers
 
             var createdItem = await _itemService.AddAsync(item);
 
-    return CreatedAtAction(
-        nameof(GetItem),
-        new { id = createdItem.Id },
-        createdItem);
-}
+            return CreatedAtAction(
+                nameof(GetItem),
+                new { id = createdItem.Id },
+                createdItem);
+        }
 
         [HttpPost("upload")]
         public async Task<IActionResult> UploadItems(IFormFile file)
