@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import type { ItemDto, ItemCategory } from "../types";
+import { ItemInteractions } from "../components/ItemInteractions";
 
 const categoryNames: Record<ItemCategory, string> = {
     Clothing: "Drabužiai",
@@ -209,6 +210,7 @@ export default function ItemDetails() {
                                         </div>
                                     )
                                 }
+                                <ItemInteractions itemId={item.id} />
                             </div>
                         </div>
                     </div>
