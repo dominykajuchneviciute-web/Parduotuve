@@ -17,7 +17,7 @@ public class CommentLikeService
     {
         var rawComments = await _context.ItemComments
             .Where(c => c.ItemId == itemId)
-            .ToListAsync(); 
+            .ToListAsync();
 
         return rawComments
             .Where(c => !string.IsNullOrWhiteSpace(c.Text))
@@ -38,6 +38,21 @@ public class CommentLikeService
         _context.ItemComments.Add(comment);
         await _context.SaveChangesAsync();
         return comment;
+    }
+
+    public async Task<bool> DeleteCommentAsync(int commentId, string userId)
+    {
+        var comment = await _context.ItemComments
+            .FirstOrDefaultAsync(c => c.Id == commentId && c.UserId == userId);
+
+        if (comment is null)
+        {
+            return false;
+        }
+
+        _context.ItemComments.Remove(comment);
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     public async Task<bool> ToggleLikeAsync(int itemId, string userId)

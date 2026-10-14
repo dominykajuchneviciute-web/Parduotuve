@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../AuthContext';
 
 const API_BASE = "http://localhost:5145/api/items";
 
 interface Comment {
     id: number;
     itemId: number;
-    userId: string;
     text: string;
     createdAt: string;
+    isOwner: boolean;
 }
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export const ItemInteractions: React.FC<Props> = ({ itemId }) => {
+    const { user } = useAuth();
     const [likes, setLikes] = useState<number>(0);
     const [isLiked, setIsLiked] = useState<boolean>(false);
     const [comments, setComments] = useState<Comment[]>([]);
@@ -24,7 +26,7 @@ export const ItemInteractions: React.FC<Props> = ({ itemId }) => {
     useEffect(() => {
         fetchLikes();
         fetchComments();
-    }, [itemId]);
+    }, [itemId, user]);
 
     const fetchLikes = async () => {
         try {
@@ -102,6 +104,25 @@ export const ItemInteractions: React.FC<Props> = ({ itemId }) => {
         }
     };
 
+    const handleDeleteComment = async (commentId: number) => {
+        if (!window.confirm("Ar tikrai norite ištrinti šį komentarą?")) return;
+
+        try {
+            const res = await fetch(`${API_BASE}/${itemId}/comments/${commentId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+
+            if (res.ok) {
+                setComments((prev) => prev.filter((c) => c.id !== commentId));
+            } else if (res.status === 401 || res.status === 404) {
+                alert("Nepavyko ištrinti: galite trinti tik savo komentarus.");
+            }
+        } catch (err) {
+            console.error("Klaida trinant komentarą:", err);
+        }
+    };
+
     return (
         <div className="mt-3 pt-3 border-top">
             <div className="d-flex align-items-center gap-2 mb-2">
@@ -123,11 +144,24 @@ export const ItemInteractions: React.FC<Props> = ({ itemId }) => {
                 ) : (
                     <div className="d-flex flex-column gap-2" style={{ maxHeight: '180px', overflowY: 'auto' }}>
                         {comments.map((c) => (
-                            <div key={c.id} className="bg-light p-2 rounded small">
-                                <div>{c.text}</div>
-                                <div className="text-muted" style={{ fontSize: '11px' }}>
-                                    {new Date(c.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            <div key={c.id} className="bg-light p-2 rounded small d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div>{c.text}</div>
+                                    <div className="text-muted" style={{ fontSize: '11px' }}>
+                                        {new Date(c.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </div>
                                 </div>
+                                {user && c.isOwner && (
+                                    <button
+                                        type="button"
+                                        onClick={() => handleDeleteComment(c.id)}
+                                        className="btn btn-outline-secondary btn-sm border-0 py-0 px-1 text-danger"
+                                        title="Ištrinti komentarą"
+                                        style={{ fontSize: '12px' }}
+                                    >
+                                        ✕
+                                    </button>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -138,11 +172,12 @@ export const ItemInteractions: React.FC<Props> = ({ itemId }) => {
                 <input
                     type="text"
                     className="form-control form-control-sm"
-                    placeholder="Rašyti komentarą..."
+                    placeholder={user ? "Rašyti komentarą..." : "Prisijunkite, norėdami komentuoti"}
+                    disabled={!user}
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                 />
-                <button type="submit" className="btn btn-primary btn-sm">
+                <button type="submit" className="btn btn-primary btn-sm" disabled={!user}>
                     Siųsti
                 </button>
             </form>
