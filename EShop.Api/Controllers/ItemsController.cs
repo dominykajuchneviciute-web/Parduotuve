@@ -22,10 +22,18 @@ namespace EShop.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Item>>> GetItems()
+        public async Task<ActionResult<List<Item>>> GetItems(
+            [FromQuery] ItemFilter filter)
         {
-            var items = await _itemService.GetAllAsync();
-            return Ok(items);
+            try
+            {
+                var items = await _itemService.GetFilteredAsync(filter);
+                return Ok(items);
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         [HttpGet("{id}")]
