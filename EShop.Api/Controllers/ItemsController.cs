@@ -139,6 +139,7 @@ namespace EShop.Api.Controllers
                 createdItem);
         }
 
+        
         [HttpPost("upload")]
         public async Task<IActionResult> UploadItems(IFormFile file)
         {
@@ -151,7 +152,9 @@ namespace EShop.Api.Controllers
 
             var items = await _itemFileLoader.LoadAsync(stream);
 
-            return Ok(items);
+            var savedItems = await _itemService.AddRangeAsync(items);
+
+            return Ok(savedItems);
         }
 
         [HttpDelete("{id}")]

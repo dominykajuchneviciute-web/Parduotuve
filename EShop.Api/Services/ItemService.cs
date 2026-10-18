@@ -31,7 +31,14 @@ public class ItemService
 
         return item;
     }
+    public async Task<List<Item>> AddRangeAsync(List<Item> items)
+    {
+        _context.Items.AddRange(items);
 
+        await _context.SaveChangesAsync();
+
+        return items;
+    }
     public async Task<bool> DeleteAsync(int id)
     {
         var item = await _context.Items
