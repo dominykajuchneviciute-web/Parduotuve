@@ -27,13 +27,23 @@ export default function Items() {
   }, []);
 
     const conditionLabels: Record<string, string> = {
-        "0": "New",
-        "1": "VeryGood",
-        "2": "Good",
-        "3": "Decent",
-        "4": "Used",
-        "5": "VeryUsed",
+        "0": "Nauja prekė",
+        "1": "Labai gera būklė",
+        "2": "Gera būklė",
+        "3": "Patenkinama būklė",
+        "4": "Naudota prekė",
+        "5": "Labai naudota prekė",
+        New: "Nauja prekė",
+        VeryGood: "Labai gera būklė",
+        Good: "Gera būklė",
+        Decent: "Patenkinama būklė",
+        Used: "Naudota prekė",
+        VeryUsed: "Labai naudota prekė",
     };
+    function getConditionLabel(condition: string | number): string {
+        return conditionLabels[String(condition)] ?? String(condition);
+    }
+
 
     const filteredItems = allItems.filter((i) => {
         const matchesSearch =
@@ -150,11 +160,13 @@ export default function Items() {
                                 </span>
 
                     {
+                   
                         item.condition != null && (
                             <span className="badge bg-secondary me-1" >
-                            { item.condition }
+                            { getConditionLabel(item.condition) }
                                 </span>
-                      )
+                        )
+                    
                     }
 
                     {

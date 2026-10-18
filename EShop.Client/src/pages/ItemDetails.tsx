@@ -10,7 +10,23 @@ const categoryNames: Record<ItemCategory, string> = {
   Footwear: "Avalynė",
   Instrument: "Muzikos instrumentai",
 };
-
+const conditionLabels: Record<string, string> = {
+    "0": "Nauja prekė",
+    "1": "Labai gera būklė",
+    "2": "Gera būklė",
+    "3": "Patenkinama būklė",
+    "4": "Naudota prekė",
+    "5": "Labai naudota prekė",
+    New: "Nauja prekė",
+    VeryGood: "Labai gera būklė",
+    Good: "Gera būklė",
+    Decent: "Patenkinama būklė",
+    Used: "Naudota prekė",
+    VeryUsed: "Labai naudota prekė",
+};
+function getConditionLabel(condition: string | number): string {
+    return conditionLabels[String(condition)] ?? String(condition);
+}
 export default function ItemDetails() {
   const { id } = useParams<{ id: string }>();
 
@@ -108,7 +124,7 @@ return (
     < h5 className = "mb-3" > Pagrindinė informacija </h5>
 
 { renderDetail("Daikto ID", item.id) }
-{ renderDetail("Būklė", item.condition) }
+{ renderDetail("Būklė", getConditionLabel(item.condition)) }
 { renderDetail("Aprašymas", item.description) }
 
 <hr />
