@@ -7,6 +7,21 @@ export type ItemCategory =
     | "Footwear"
     | "Instrument";
 
+export interface ItemFilterState {
+    searchQuery: string;
+    selectedCondition: string;
+    selectedCategory: ItemCategory | "";
+    manufacturer: string;
+    model: string;
+    color: string;
+    material: string;
+    dimensions: string;
+    instrumentType: string;
+    size: string;
+    shoeSize: string;
+    year: string;
+}
+
 export interface ItemDto {
     id: number;
     name: string;

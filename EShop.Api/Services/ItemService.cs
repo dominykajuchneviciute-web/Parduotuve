@@ -24,6 +24,13 @@ public class ItemService
             .FirstOrDefaultAsync(item => item.Id == id);
     }
 
+    public async Task<List<Item>> GetByOwnerAsync(string ownerId)
+    {
+        return await _context.Items
+            .Where(item => item.OwnerId == ownerId)
+            .ToListAsync();
+    }
+
     public async Task<Item> AddAsync(Item item)
     {
         _context.Items.Add(item);
@@ -35,14 +42,18 @@ public class ItemService
     {
         _context.Items.AddRange(items);
 
+<<<<<<< HEAD
         await _context.SaveChangesAsync();
 
         return items;
     }
     public async Task<bool> DeleteAsync(int id)
+=======
+    public async Task<bool> DeleteAsync(int id, string ownerId)
+>>>>>>> main
     {
         var item = await _context.Items
-            .FirstOrDefaultAsync(item => item.Id == id);
+            .FirstOrDefaultAsync(item => item.Id == id && item.OwnerId == ownerId);
 
         if (item == null)
         {

@@ -3,6 +3,8 @@ using EShop.Api.Models;
 using EShop.Api.Models.Items;
 using EShop.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using EShop.Api.DTOs;
 using EShop.Api.Factories;
 
@@ -29,6 +31,15 @@ namespace EShop.Api.Controllers
             return Ok(items);
         }
 
+        [Authorize]
+        [HttpGet("mine")]
+        public async Task<ActionResult<List<Item>>> GetMyItems()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var items = await _itemService.GetByOwnerAsync(userId!);
+            return Ok(items);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Item>> GetItem(int id)
         {
@@ -42,6 +53,7 @@ namespace EShop.Api.Controllers
             return Ok(item);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Item>> CreateItem(CreateItemRequest request)
         {
@@ -61,15 +73,43 @@ namespace EShop.Api.Controllers
                 return BadRequest(ex.Message);
             }
 
+<<<<<<< HEAD
             await _itemService.AddAsync(item);
 
             return Ok(item);
+=======
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            item.OwnerId = userId;
+
+            var createdItem = await _itemService.AddAsync(item);
+
+    return CreatedAtAction(
+        nameof(GetItem),
+        new { id = createdItem.Id },
+        createdItem);
+}
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadItems(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("File is empty.");
+            }
+
+            await using var stream = file.OpenReadStream();
+
+            var items = await _itemFileLoader.LoadAsync(stream);
+
+            return Ok(items);
+>>>>>>> main
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItem(int id)
         {
-            var deleted = await _itemService.DeleteAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var deleted = await _itemService.DeleteAsync(id, userId!);
 
             if (!deleted)
             {
