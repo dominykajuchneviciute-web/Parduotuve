@@ -1,9 +1,10 @@
-using Microsoft.AspNetCore.Http;
 using EShop.Api.Models;
 using EShop.Api.Models.Items;
 using EShop.Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using EShop.Api.DTOs;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using EShop.Api.DTO;
 
 
 namespace EShop.Api.Controllers
@@ -36,6 +37,15 @@ namespace EShop.Api.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet("mine")]
+        public async Task<ActionResult<List<Item>>> GetMyItems()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var items = await _itemService.GetByOwnerAsync(userId!);
+            return Ok(items);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Item>> GetItem(int id)
         {
@@ -49,6 +59,7 @@ namespace EShop.Api.Controllers
             return Ok(item);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Item>> CreateItem(CreateItemRequest request)
         {
@@ -139,6 +150,9 @@ namespace EShop.Api.Controllers
                         "Galimos kategorijos: Clothing, Electronics, Furniture, Transport, Footwear, Instrument.");
             }
 
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            item.OwnerId = userId;
+
             var createdItem = await _itemService.AddAsync(item);
 
             return CreatedAtAction(
@@ -165,7 +179,8 @@ namespace EShop.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItem(int id)
         {
-            var deleted = await _itemService.DeleteAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var deleted = await _itemService.DeleteAsync(id, userId!);
 
             if (!deleted)
             {
