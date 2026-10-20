@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import type { ItemCategory, ItemDto, ItemFilterState } from "../types";
-import { matchesItemFilters } from "../utils/itemFilters";
 
 const categoryLabels: Record<ItemCategory, string> = {
   Clothing: "Drabužiai",
@@ -51,44 +50,87 @@ export default function Items() {
   };
 
   useEffect(() => {
-     fetch("http://localhost:5145/api/items")
-      .then((res) => {
-        if (!res.ok) throw new Error("Klaida gaunant duomenis");
-        return res.json();
-      })
-      .then((data) => {
-        setAllItems(data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        setErrorMessage("Nepavyko pasiekti serverio: " + err.message);
-        setIsLoading(false);
-      });
-  }, []);
-
-
-    const conditionLabels: Record<string, string> = {
-        "0": "Naujas",
-        "1": "Labai geras",
-        "2": "Geras",
-        "3": "Patenkinamas",
-        "4": "Naudotas",
-        "5": "Labai naudotas",
-        New: "Naujas",
-        VeryGood: "Labai geras",
-        Good: "Geras",
-        Decent: "Patenkinamas",
-        Used: "Naudotas",
-        VeryUsed: "Labai naudotas",
+    const controller = new AbortController();
+    const query = new URLSearchParams();
+    const filterParameters: Record<string, string> = {
+      name: filters.searchQuery,
+      condition: filters.selectedCondition,
+      itemType: filters.selectedCategory,
+      manufacturer: filters.manufacturer,
+      model: filters.model,
+      color: filters.color,
+      material: filters.material,
+      dimensions: filters.dimensions,
+      instrumentType: filters.instrumentType,
+      size: filters.size,
+      shoeSize: filters.shoeSize,
+      year: filters.year,
     };
 
-    function getConditionLabel(condition: string | number): string {
-        return conditionLabels[String(condition)] ?? String(condition);
-    }
 
-    const filteredItems = allItems.filter((item) =>
-        matchesItemFilters(item, filters),
-    );
+      const conditionLabels: Record<string, string> = {
+          "0": "Naujas",
+          "1": "Labai geras",
+          "2": "Geras",
+          "3": "Patenkinamas",
+          "4": "Naudotas",
+          "5": "Labai naudotas",
+          New: "Naujas",
+          VeryGood: "Labai geras",
+          Good: "Geras",
+          Decent: "Patenkinamas",
+          Used: "Naudotas",
+          VeryUsed: "Labai naudotas",
+      };
+
+      function getConditionLabel(condition: string | number): string {
+          return conditionLabels[String(condition)] ?? String(condition);
+      }
+
+      Object.entries(filterParameters).forEach(([key, value]) => {
+          if (value.trim()) {
+              query.set(key, value.trim());
+          }
+      });
+
+      const loadItems = async () => {
+          setIsLoading(true);
+          setErrorMessage("");
+
+          try {
+              const res = await fetch(
+                  `http://localhost:5145/api/items?${query.toString()}`,
+                  { signal: controller.signal },
+              );
+
+              if (!res.ok) {
+                  const message = await res.text();
+                  throw new Error(message || "Klaida gaunant duomenis");
+              }
+
+              const data = (await res.json()) as ItemDto[];
+              setAllItems(data);
+          } catch (error: unknown) {
+              if (error instanceof DOMException && error.name === "AbortError") {
+                  return;
+              }
+
+              const message =
+                  error instanceof Error ? error.message : "Nežinoma serverio klaida";
+              setErrorMessage("Nepavyko pasiekti serverio: " + message);
+          } finally {
+              if (!controller.signal.aborted) {
+                  setIsLoading(false);
+              }
+          }
+      };
+
+      void loadItems();
+
+      return () => controller.abort();
+  }, [filters]);
+
+    const filteredItems = allItems;
 
 
   const resetFilters = () => {
