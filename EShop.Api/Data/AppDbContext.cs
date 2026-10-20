@@ -15,6 +15,7 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     public DbSet<Item> Items => Set<Item>();
     public DbSet<ItemComment> ItemComments => Set<ItemComment>();
     public DbSet<ItemLike> ItemLikes => Set<ItemLike>();
+    public DbSet<ItemSaved> ItemSaved => Set<ItemSaved>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

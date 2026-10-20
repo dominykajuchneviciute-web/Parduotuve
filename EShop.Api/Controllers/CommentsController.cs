@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using EShop.Api.DTO;
+using EShop.Api.Models;
 using EShop.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -96,5 +97,36 @@ public class ItemInteractionsController : ControllerBase
     {
         var count = await _service.GetLikesCountAsync(itemId);
         return Ok(new { ItemId = itemId, TotalLikes = count });
+    }
+
+    [HttpGet("saved")]
+    public async Task<IActionResult> GetSavedStatus(int itemId)
+    {
+        var isSaved = await _service.IsItemSavedAsync(itemId, GetCurrentUserId());
+        return Ok(new { isSaved });
+    }
+
+    [Authorize]
+    [HttpPost("saved/toggle")]
+    public async Task<IActionResult> ToggleSaved(int itemId)
+    {
+        var userId = GetCurrentUserId();
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
+
+        var isSaved = await _service.ToggleSavedAsync(itemId, userId);
+        return Ok(new { isSaved });
+    }
+
+    [Authorize]
+    [HttpGet("~/api/items/saved")]
+    public async Task<ActionResult<List<Item>>> GetUserSavedItems()
+    {
+        var userId = GetCurrentUserId();
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized();
+
+        var items = await _service.GetUserSavedItemsAsync(userId);
+        return Ok(items);
     }
 }
