@@ -34,7 +34,24 @@ const emptyFilters: ItemFilterState = {
   shoeSize: "",
   year: "",
 };
+const conditionLabels: Record<string, string> = {
+    "0": "Naujas",
+    "1": "Labai geras",
+    "2": "Geras",
+    "3": "Patenkinamas",
+    "4": "Naudotas",
+    "5": "Labai naudotas",
+    New: "Naujas",
+    VeryGood: "Labai geras",
+    Good: "Geras",
+    Decent: "Patenkinamas",
+    Used: "Naudotas",
+    VeryUsed: "Labai naudotas",
+};
 
+function getConditionLabel(condition: string | number): string {
+    return conditionLabels[String(condition)] ?? String(condition);
+}
 export default function Items() {
   const [allItems, setAllItems] = useState<ItemDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -66,26 +83,6 @@ export default function Items() {
       shoeSize: filters.shoeSize,
       year: filters.year,
     };
-
-
-      const conditionLabels: Record<string, string> = {
-          "0": "Naujas",
-          "1": "Labai geras",
-          "2": "Geras",
-          "3": "Patenkinamas",
-          "4": "Naudotas",
-          "5": "Labai naudotas",
-          New: "Naujas",
-          VeryGood: "Labai geras",
-          Good: "Geras",
-          Decent: "Patenkinamas",
-          Used: "Naudotas",
-          VeryUsed: "Labai naudotas",
-      };
-
-      function getConditionLabel(condition: string | number): string {
-          return conditionLabels[String(condition)] ?? String(condition);
-      }
 
       Object.entries(filterParameters).forEach(([key, value]) => {
           if (value.trim()) {
@@ -432,7 +429,7 @@ export default function Items() {
                   <div className="card-body d-flex flex-column">
                     <h5 className="card-title" > { item.name } </h5>
 
-                        < div className = "mb-2" >
+                       < div className = "mb-2" >
                             <span className="badge bg-primary me-1" >
                             { getCategoryLabel(item) }
                                 </span>

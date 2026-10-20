@@ -10,7 +10,14 @@ interface Item {
     itemType?: string;
     category?: string;
 }
-
+const categoryLabels: Record<string, string> = {
+    Clothing: "Drabužiai",
+    Electronics: "Elektronika",
+    Furniture: "Baldai",
+    Transport: "Transportas",
+    Footwear: "Avalynė",
+    Instrument: "Muzikos instrumentai",
+};
 export default function Home() {
     const [items, setItems] = useState<Item[]>([]);
     const [loading, setLoading] = useState(true);
@@ -110,10 +117,13 @@ export default function Home() {
                 { item.name }
                 </h5>
 
-                  {
-                        item.itemType && (
-                            <p className="text-muted small mb-2">
-                                Kategorija: { item.itemType }
+                  {(item.itemType || item.category) && (
+                        <p className="text-muted small mb-2" >
+                Kategorija: {
+                    categoryLabels[item.itemType || item.category || ""] ||
+                        item.itemType ||
+                        item.category
+                }
                 </p>
                 )
             }
