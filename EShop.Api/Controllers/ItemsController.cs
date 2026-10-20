@@ -4,6 +4,7 @@ using EShop.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using EShop.Api.Factories;
 using EShop.Api.DTO;
 
 
@@ -70,84 +71,13 @@ namespace EShop.Api.Controllers
 
             Item item;
 
-            switch (request.Category.Trim().ToLowerInvariant())
+            try
             {
-                case "clothing":
-                    item = new Clothing
-                    {
-                        Name = request.Name,
-                        Condition = request.Condition,
-                        Description = request.Description,
-                        Size = request.Size,
-                        Color = request.Color,
-                        Manufacturer = request.Manufacturer
-                    };
-                    break;
-
-                case "electronics":
-                    item = new Electronics
-                    {
-                        Name = request.Name,
-                        Condition = request.Condition,
-                        Description = request.Description,
-                        Model = request.Model,
-                        Color = request.Color,
-                        Manufacturer = request.Manufacturer
-                    };
-                    break;
-
-                case "furniture":
-                    item = new Furniture
-                    {
-                        Name = request.Name,
-                        Condition = request.Condition,
-                        Description = request.Description,
-                        Material = request.Material,
-                        Color = request.Color,
-                        Dimensions = request.Dimensions
-                    };
-                    break;
-
-                case "transport":
-                    item = new Transport
-                    {
-                        Name = request.Name,
-                        Condition = request.Condition,
-                        Description = request.Description,
-                        Manufacturer = request.Manufacturer,
-                        Model = request.Model,
-                        Year = request.Year,
-                    };
-                    break;
-
-                case "footwear":
-                    item = new Footwear
-                    {
-                        Name = request.Name,
-                        Condition = request.Condition,
-                        Description = request.Description,
-                        ShoeSize = request.ShoeSize,
-                        Color = request.Color,
-                        Manufacturer = request.Manufacturer
-                    };
-                    break;
-
-                case "instrument":
-                    item = new Instrument
-                    {
-                        Name = request.Name,
-                        Condition = request.Condition,
-                        Description = request.Description,
-                        InstrumentType = request.InstrumentType,
-                        Manufacturer = request.Manufacturer,
-                        Year = request.Year
-                    };
-                    break;
-
-                default:
-                    return BadRequest(
-                        "Nežinoma prekės kategorija. " +
-                        "Galimos kategorijos: Clothing, Electronics, Furniture, Transport, Footwear, Instrument.");
+                item = ItemFactory.Create(request);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -159,21 +89,7 @@ namespace EShop.Api.Controllers
                 nameof(GetItem),
                 new { id = createdItem.Id },
                 createdItem);
-        }
 
-        [HttpPost("upload")]
-        public async Task<IActionResult> UploadItems(IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-            {
-                return BadRequest("File is empty.");
-            }
-
-            await using var stream = file.OpenReadStream();
-
-            var items = await _itemFileLoader.LoadAsync(stream);
-
-            return Ok(items);
         }
 
         [HttpDelete("{id}")]
@@ -190,5 +106,21 @@ namespace EShop.Api.Controllers
             return NoContent();
         }
 
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadItems(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("File is empty.");
+            }
+
+            await using var stream = file.OpenReadStream();
+
+            var items = await _itemFileLoader.LoadAsync(stream);
+
+            var savedItems = await _itemService.AddRangeAsync(items);
+
+            return Ok(savedItems);
+        }
     }
 }

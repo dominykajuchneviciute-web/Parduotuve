@@ -2,6 +2,24 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import type { ItemDto } from "../types";
 
+const conditionLabels: Record<string, string> = {
+    New: "Naujas",
+    VeryGood: "Labai gera",
+    Good: "Gera",
+    Decent: "Patenkinama",
+    Used: "Naudotas",
+    VeryUsed: "Labai naudotas",
+    "0": "Naujas",
+    "1": "Labai gera",
+    "2": "Gera",
+    "3": "Patenkinama",
+    "4": "Naudotas",
+    "5": "Labai naudotas",
+};
+
+function getConditionLabel(condition: string | number): string {
+    return conditionLabels[String(condition)] ?? String(condition);
+}
 export default function MyItems() {
   const [serverItems, setServerItems] = useState<ItemDto[]>([]);
   const [savedItems, setSavedItems] = useState<ItemDto[]>([]);
@@ -379,18 +397,19 @@ export default function MyItems() {
                 {!isLoading && serverItems.length === 0 && (
                   <p className="text-muted">Šiuo metu nesate įkėlę jokių daiktų.</p>
                 )}
-                <ul className="list-group">
-                  {serverItems.map((item) => (
-                    <li
-                      key={item.id}
-                      className="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                      <div>
-                        <strong>{item.name}</strong>
-                        <div className="text-muted small">
-                          {item.manufacturer && `${item.manufacturer} | `}
-                          Būklė: {item.condition}
-                          {item.size && ` | Dydis: ${item.size}`}
+<ul className="list-group" >
+{
+    serverItems.map((item) => (
+        <li
+                      key= { item.id }
+                      className = "list-group-item d-flex justify-content-between align-items-center"
+        >
+        <div>
+        <strong>{ item.name } </strong>
+        < div className = "text-muted small" >
+        { item.manufacturer && `${item.manufacturer} | ` }
+                          Būklė: { getConditionLabel(item.condition)}
+                          { item.size && ` | Dydis: ${item.size}` }
                         </div>
                       </div>
                       <div className="d-flex gap-2">
@@ -426,7 +445,8 @@ export default function MyItems() {
                         <strong>{item.name}</strong>
                         <div className="text-muted small">
                           {item.manufacturer && `${item.manufacturer} | `}
-                          Būklė: {item.condition}
+                          Būklė: { getConditionLabel(item.condition)
+                  }
                           {item.size && ` | Dydis: ${item.size}`}
                         </div>
                       </div>

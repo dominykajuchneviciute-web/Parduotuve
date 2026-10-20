@@ -34,7 +34,24 @@ const emptyFilters: ItemFilterState = {
   shoeSize: "",
   year: "",
 };
+const conditionLabels: Record<string, string> = {
+    "0": "Naujas",
+    "1": "Labai geras",
+    "2": "Geras",
+    "3": "Patenkinamas",
+    "4": "Naudotas",
+    "5": "Labai naudotas",
+    New: "Naujas",
+    VeryGood: "Labai geras",
+    Good: "Geras",
+    Decent: "Patenkinamas",
+    Used: "Naudotas",
+    VeryUsed: "Labai naudotas",
+};
 
+function getConditionLabel(condition: string | number): string {
+    return conditionLabels[String(condition)] ?? String(condition);
+}
 export default function Items() {
   const [allItems, setAllItems] = useState<ItemDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -67,50 +84,51 @@ export default function Items() {
       year: filters.year,
     };
 
-    Object.entries(filterParameters).forEach(([key, value]) => {
-      if (value.trim()) {
-        query.set(key, value.trim());
-      }
-    });
+      Object.entries(filterParameters).forEach(([key, value]) => {
+          if (value.trim()) {
+              query.set(key, value.trim());
+          }
+      });
 
-    const loadItems = async () => {
-      setIsLoading(true);
-      setErrorMessage("");
+      const loadItems = async () => {
+          setIsLoading(true);
+          setErrorMessage("");
 
-      try {
-        const res = await fetch(
-          `http://localhost:5145/api/items?${query.toString()}`,
-          { signal: controller.signal },
-        );
+          try {
+              const res = await fetch(
+                  `http://localhost:5145/api/items?${query.toString()}`,
+                  { signal: controller.signal },
+              );
 
-        if (!res.ok) {
-          const message = await res.text();
-          throw new Error(message || "Klaida gaunant duomenis");
-        }
+              if (!res.ok) {
+                  const message = await res.text();
+                  throw new Error(message || "Klaida gaunant duomenis");
+              }
 
-        const data = (await res.json()) as ItemDto[];
-        setAllItems(data);
-      } catch (error: unknown) {
-        if (error instanceof DOMException && error.name === "AbortError") {
-          return;
-        }
+              const data = (await res.json()) as ItemDto[];
+              setAllItems(data);
+          } catch (error: unknown) {
+              if (error instanceof DOMException && error.name === "AbortError") {
+                  return;
+              }
 
-        const message =
-          error instanceof Error ? error.message : "Nežinoma serverio klaida";
-        setErrorMessage("Nepavyko pasiekti serverio: " + message);
-      } finally {
-        if (!controller.signal.aborted) {
-          setIsLoading(false);
-        }
-      }
-    };
+              const message =
+                  error instanceof Error ? error.message : "Nežinoma serverio klaida";
+              setErrorMessage("Nepavyko pasiekti serverio: " + message);
+          } finally {
+              if (!controller.signal.aborted) {
+                  setIsLoading(false);
+              }
+          }
+      };
 
-    void loadItems();
+      void loadItems();
 
-    return () => controller.abort();
+      return () => controller.abort();
   }, [filters]);
 
-  const filteredItems = allItems;
+    const filteredItems = allItems;
+
 
   const resetFilters = () => {
     setFilters(emptyFilters);
@@ -411,17 +429,19 @@ export default function Items() {
                   <div className="card-body d-flex flex-column">
                     <h5 className="card-title" > { item.name } </h5>
 
-                        < div className = "mb-2" >
+                       < div className = "mb-2" >
                             <span className="badge bg-primary me-1" >
                             { getCategoryLabel(item) }
                                 </span>
 
                     {
+                   
                         item.condition != null && (
                             <span className="badge bg-secondary me-1" >
-                            { item.condition }
+                            { getConditionLabel(item.condition) }
                                 </span>
-                      )
+                        )
+                    
                     }
 
                     {
