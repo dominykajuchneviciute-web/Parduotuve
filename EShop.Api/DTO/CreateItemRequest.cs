@@ -1,6 +1,6 @@
 using EShop.Api.Models;
 
-namespace EShop.Api.DTOs;
+namespace EShop.Api.DTO;
 
 public class CreateItemRequest
 {

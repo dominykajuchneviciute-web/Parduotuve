@@ -1,12 +1,11 @@
-using Microsoft.AspNetCore.Http;
 using EShop.Api.Models;
 using EShop.Api.Models.Items;
 using EShop.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using EShop.Api.DTOs;
 using EShop.Api.Factories;
+using EShop.Api.DTO;
 
 
 namespace EShop.Api.Controllers
@@ -73,36 +72,16 @@ namespace EShop.Api.Controllers
                 return BadRequest(ex.Message);
             }
 
-<<<<<<< HEAD
-            await _itemService.AddAsync(item);
-
-            return Ok(item);
-=======
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             item.OwnerId = userId;
 
             var createdItem = await _itemService.AddAsync(item);
 
-    return CreatedAtAction(
-        nameof(GetItem),
-        new { id = createdItem.Id },
-        createdItem);
-}
+            return CreatedAtAction(
+                nameof(GetItem),
+                new { id = createdItem.Id },
+                createdItem);
 
-        [HttpPost("upload")]
-        public async Task<IActionResult> UploadItems(IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-            {
-                return BadRequest("File is empty.");
-            }
-
-            await using var stream = file.OpenReadStream();
-
-            var items = await _itemFileLoader.LoadAsync(stream);
-
-            return Ok(items);
->>>>>>> main
         }
 
         [HttpDelete("{id}")]

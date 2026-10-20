@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import type { ItemDto } from "../types";
 
 export default function MyItems() {
   const [serverItems, setServerItems] = useState<ItemDto[]>([]);
+  const [savedItems, setSavedItems] = useState<ItemDto[]>([]);
+  const [activeTab, setActiveTab] = useState<"mine" | "saved">("mine");
+
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingSaved, setIsLoadingSaved] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
 
   const [name, setName] = useState("");
@@ -24,11 +29,11 @@ export default function MyItems() {
     setIsLoading(true);
     fetch("http://localhost:5145/api/items/mine", { credentials: "include" })
       .then((res) => {
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
-      return res.json();
-    })
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        return res.json();
+      })
       .then((data) => {
         setServerItems(data);
         setIsLoading(false);
@@ -39,86 +44,122 @@ export default function MyItems() {
       });
   };
 
+  const loadSavedItems = () => {
+    setIsLoadingSaved(true);
+    fetch("http://localhost:5145/api/items/saved", { credentials: "include" })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setSavedItems(data);
+        setIsLoadingSaved(false);
+      })
+      .catch((err) => {
+        console.error("Klaida kraunant įsimintus daiktus:", err);
+        setIsLoadingSaved(false);
+      });
+  };
+
   useEffect(() => {
     loadItems();
+    loadSavedItems();
   }, []);
 
-    const createItem = async () => {
-        if (!name.trim()) {
-            setStatusMessage("Nurodykite daikto pavadinimą!");
-            return;
-        }
+  const createItem = async () => {
+    if (!name.trim()) {
+      setStatusMessage("Nurodykite daikto pavadinimą!");
+      return;
+    }
 
-        const payload = {
-            category,
-            name,
-            description,
-            condition,
-            size: category === "Clothing" && size ? Number(size) : null,
-            shoeSize: category === "Footwear" && shoeSize ? Number(shoeSize) : null,
-            manufacturer: category !== "Furniture" ? manufacturer || null : null,
-            color: ["Clothing", "Electronics", "Furniture", "Footwear"].includes(category)
-                ? color || null
-                : null,
-            model: ["Electronics", "Transport"].includes(category) ? model || null : null,
-            material: category === "Furniture" ? material || null : null,
-            dimensions: category === "Furniture" ? dimensions || null : null,
-            year: ["Transport", "Instrument"].includes(category) && year
-                ? Number(year)
-                : null,
-            instrumentType: category === "Instrument" ? instrumentType || null : null
-        };
-
-        try {
-            const res = await fetch("http://localhost:5145/api/items", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "include",
-                body: JSON.stringify(payload)
-            });
-
-            if (!res.ok) {
-                const errorText = await res.text();
-
-                setStatusMessage(
-                    `Klaida (${res.status}): ${errorText}`
-                );
-
-                console.log("POST klaida:", res.status, errorText);
-                return;
-            }
-
-            setStatusMessage("Daiktas sėkmingai pridėtas!");
-
-            setName("");
-            setDescription("");
-            setSize("");
-            setManufacturer("");
-            setColor("");
-
-            loadItems();
-        } catch (error) {
-            console.error(error);
-            setStatusMessage("Nepavyko pasiekti API.");
-        }
+    const payload = {
+      category,
+      name,
+      description,
+      condition,
+      size: category === "Clothing" && size ? Number(size) : null,
+      shoeSize: category === "Footwear" && shoeSize ? Number(shoeSize) : null,
+      manufacturer: category !== "Furniture" ? manufacturer || null : null,
+      color: ["Clothing", "Electronics", "Furniture", "Footwear"].includes(category)
+        ? color || null
+        : null,
+      model: ["Electronics", "Transport"].includes(category) ? model || null : null,
+      material: category === "Furniture" ? material || null : null,
+      dimensions: category === "Furniture" ? dimensions || null : null,
+      year: ["Transport", "Instrument"].includes(category) && year
+        ? Number(year)
+        : null,
+      instrumentType: category === "Instrument" ? instrumentType || null : null
     };
 
+    try {
+      const res = await fetch("http://localhost:5145/api/items", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        setStatusMessage(`Klaida (${res.status}): ${errorText}`);
+        return;
+      }
+
+      setStatusMessage("Daiktas sėkmingai pridėtas!");
+
+      setName("");
+      setDescription("");
+      setSize("");
+      setManufacturer("");
+      setColor("");
+      setModel("");
+      setMaterial("");
+      setDimensions("");
+      setYear("");
+      setShoeSize("");
+      setInstrumentType("");
+
+      loadItems();
+    } catch (error) {
+      console.error(error);
+      setStatusMessage("Nepavyko pasiekti API.");
+    }
+  };
+
   const deleteItem = async (id: number) => {
-    const res = await fetch(`http://localhost:5145/api/items/${id}`, { method: "DELETE", credentials: "include",});
+    const res = await fetch(`http://localhost:5145/api/items/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
     if (res.ok) {
       setStatusMessage("Skelbimas pašalintas!");
       loadItems();
     }
   };
 
+  const removeSavedItem = async (id: number) => {
+    try {
+      const res = await fetch(`http://localhost:5145/api/items/${id}/saved/toggle`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (res.ok) {
+        loadSavedItems();
+      }
+    } catch (error) {
+      console.error("Klaida šalinant iš įsimintų:", error);
+    }
+  };
+
   return (
     <div className="container mt-4">
-      <h3>Mano siūlomi daiktai mainams</h3>
+      <h3>Mano paskyra ir siūlomi daiktai</h3>
       <div className="row mt-4">
-        {/* Forma */}
-             
         <div className="col-md-5 mb-4">
           <div className="card p-3 shadow-sm">
             <h5>+ Siūlyti naują daiktą</h5>
@@ -128,7 +169,6 @@ export default function MyItems() {
               <div className="alert alert-info py-2">{statusMessage}</div>
             )}
 
-            {/* Kategorija */}
             <div className="mb-2">
               <label className="form-label">Kategorija:</label>
               <select
@@ -145,7 +185,6 @@ export default function MyItems() {
               </select>
             </div>
 
-            {/* Bendri laukai */}
             <div className="mb-2">
               <label className="form-label">Pavadinimas:</label>
               <input
@@ -184,7 +223,6 @@ export default function MyItems() {
               />
             </div>
 
-            {/* Gamintojas: visos kategorijos, išskyrus Furniture */}
             {category !== "Furniture" && (
               <div className="mb-2">
                 <label className="form-label">Gamintojas:</label>
@@ -198,7 +236,6 @@ export default function MyItems() {
               </div>
             )}
 
-            {/* Drabužių dydis */}
             {category === "Clothing" && (
               <div className="mb-2">
                 <label className="form-label">Drabužio dydis:</label>
@@ -212,7 +249,6 @@ export default function MyItems() {
               </div>
             )}
 
-            {/* Avalynės dydis */}
             {category === "Footwear" && (
               <div className="mb-2">
                 <label className="form-label">Batų dydis:</label>
@@ -226,7 +262,6 @@ export default function MyItems() {
               </div>
             )}
 
-            {/* Spalva */}
             {["Clothing", "Electronics", "Furniture", "Footwear"].includes(category) && (
               <div className="mb-2">
                 <label className="form-label">Spalva:</label>
@@ -240,7 +275,6 @@ export default function MyItems() {
               </div>
             )}
 
-            {/* Elektronikos ir transporto modelis */}
             {["Electronics", "Transport"].includes(category) && (
               <div className="mb-2">
                 <label className="form-label">Modelis:</label>
@@ -254,35 +288,31 @@ export default function MyItems() {
               </div>
             )}
 
-            {/* Baldų medžiaga */}
             {category === "Furniture" && (
-              <div className="mb-2">
-                <label className="form-label">Medžiaga:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={material}
-                  onChange={(e) => setMaterial(e.target.value)}
-                  placeholder="Pvz. Medis, metalas"
-                />
-              </div>
+              <>
+                <div className="mb-2">
+                  <label className="form-label">Medžiaga:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={material}
+                    onChange={(e) => setMaterial(e.target.value)}
+                    placeholder="Pvz. Medis, metalas"
+                  />
+                </div>
+                <div className="mb-2">
+                  <label className="form-label">Matmenys:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={dimensions}
+                    onChange={(e) => setDimensions(e.target.value)}
+                    placeholder="Pvz. 120 × 60 × 75 cm"
+                  />
+                </div>
+              </>
             )}
 
-            {/* Baldų matmenys */}
-            {category === "Furniture" && (
-              <div className="mb-2">
-                <label className="form-label">Matmenys:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={dimensions}
-                  onChange={(e) => setDimensions(e.target.value)}
-                  placeholder="Pvz. 120 × 60 × 75 cm"
-                />
-              </div>
-            )}
-
-            {/* Transporto ir instrumento pagaminimo metai */}
             {["Transport", "Instrument"].includes(category) && (
               <div className="mb-2">
                 <label className="form-label">Pagaminimo metai:</label>
@@ -296,7 +326,6 @@ export default function MyItems() {
               </div>
             )}
 
-            {/* Muzikos instrumento tipas */}
             {category === "Instrument" && (
               <div className="mb-2">
                 <label className="form-label">Instrumento tipas:</label>
@@ -318,30 +347,106 @@ export default function MyItems() {
             </button>
           </div>
         </div>
-        
-
 
         <div className="col-md-7">
           <div className="card p-3 shadow-sm">
-            <h5>Mano pasiūlymai serveryje ({serverItems.length})</h5>
-            <hr />
-            {isLoading && <p className="text-muted">Kraunama iš serverio...</p>}
-            {!isLoading && serverItems.length === 0 && <p className="text-muted">Šiuo metu nesate įkėlę jokių daiktų.</p>}
-            <ul className="list-group">
-              {serverItems.map((item) => (
-                <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <strong>{item.name}</strong>
-                    <div className="text-muted small">
-                      {item.manufacturer && `${item.manufacturer} | `}
-                      Būklė: {item.condition}
-                      {item.size && ` | Dydis: ${item.size}`}
-                    </div>
-                  </div>
-                  <button className="btn btn-outline-danger btn-sm" onClick={() => deleteItem(item.id)}>Ištrinti</button>
-                </li>
-              ))}
+            <ul className="nav nav-pills mb-3">
+              <li className="nav-item">
+                <button
+                  type="button"
+                  className={`nav-link ${activeTab === "mine" ? "active" : ""}`}
+                  onClick={() => setActiveTab("mine")}
+                >
+                  Mano pasiūlymai ({serverItems.length})
+                </button>
+              </li>
+              <li className="nav-item ms-2">
+                <button
+                  type="button"
+                  className={`nav-link ${activeTab === "saved" ? "active bg-danger" : "text-danger"}`}
+                  onClick={() => setActiveTab("saved")}
+                >
+                  Įsiminti daiktai ({savedItems.length})
+                </button>
+              </li>
             </ul>
+
+            <hr className="mt-0" />
+
+            {activeTab === "mine" && (
+              <>
+                {isLoading && <p className="text-muted">Kraunama iš serverio...</p>}
+                {!isLoading && serverItems.length === 0 && (
+                  <p className="text-muted">Šiuo metu nesate įkėlę jokių daiktų.</p>
+                )}
+                <ul className="list-group">
+                  {serverItems.map((item) => (
+                    <li
+                      key={item.id}
+                      className="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                      <div>
+                        <strong>{item.name}</strong>
+                        <div className="text-muted small">
+                          {item.manufacturer && `${item.manufacturer} | `}
+                          Būklė: {item.condition}
+                          {item.size && ` | Dydis: ${item.size}`}
+                        </div>
+                      </div>
+                      <div className="d-flex gap-2">
+                        <Link to={`/item/${item.id}`} className="btn btn-outline-primary btn-sm">
+                          Peržiūrėti
+                        </Link>
+                        <button
+                          className="btn btn-outline-danger btn-sm"
+                          onClick={() => deleteItem(item.id)}
+                        >
+                          Ištrinti
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            {activeTab === "saved" && (
+              <>
+                {isLoadingSaved && <p className="text-muted">Kraunami įsiminti daiktai...</p>}
+                {!isLoadingSaved && savedItems.length === 0 && (
+                  <p className="text-muted">Neturite įsimintų daiktų. Spauskite „Įsiminti“ prie bet kurio skelbimo!</p>
+                )}
+                <ul className="list-group">
+                  {savedItems.map((item) => (
+                    <li
+                      key={item.id}
+                      className="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                      <div>
+                        <strong>{item.name}</strong>
+                        <div className="text-muted small">
+                          {item.manufacturer && `${item.manufacturer} | `}
+                          Būklė: {item.condition}
+                          {item.size && ` | Dydis: ${item.size}`}
+                        </div>
+                      </div>
+                      <div className="d-flex gap-2">
+                        <Link to={`/item/${item.id}`} className="btn btn-outline-primary btn-sm">
+                          Atidaryti
+                        </Link>
+                        <button
+                          className="btn btn-outline-secondary btn-sm"
+                          onClick={() => removeSavedItem(item.id)}
+                          title="Pašalinti iš įsimintų"
+                        >
+                          ✕ Pašalinti
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </div>
         </div>
       </div>

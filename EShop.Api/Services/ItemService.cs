@@ -41,19 +41,16 @@ public class ItemService
     public async Task<List<Item>> AddRangeAsync(List<Item> items)
     {
         _context.Items.AddRange(items);
-
-<<<<<<< HEAD
         await _context.SaveChangesAsync();
 
         return items;
     }
-    public async Task<bool> DeleteAsync(int id)
-=======
+
     public async Task<bool> DeleteAsync(int id, string ownerId)
->>>>>>> main
     {
         var item = await _context.Items
-            .FirstOrDefaultAsync(item => item.Id == id && item.OwnerId == ownerId);
+            .FirstOrDefaultAsync(item =>
+                item.Id == id && item.OwnerId == ownerId);
 
         if (item == null)
         {

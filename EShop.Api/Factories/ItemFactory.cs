@@ -1,6 +1,6 @@
 using EShop.Api.Models;
 using EShop.Api.Models.Items;
-using EShop.Api.DTOs;
+using EShop.Api.DTO;
 
 namespace EShop.Api.Factories;
 

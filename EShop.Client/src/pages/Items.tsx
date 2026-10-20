@@ -68,18 +68,18 @@ export default function Items() {
 
 
     const conditionLabels: Record<string, string> = {
-        "0": "Nauja prekė",
-        "1": "Labai gera būklė",
-        "2": "Gera būklė",
-        "3": "Patenkinama būklė",
-        "4": "Naudota prekė",
-        "5": "Labai naudota prekė",
-        New: "Nauja prekė",
-        VeryGood: "Labai gera būklė",
-        Good: "Gera būklė",
-        Decent: "Patenkinama būklė",
-        Used: "Naudota prekė",
-        VeryUsed: "Labai naudota prekė",
+        "0": "Naujas",
+        "1": "Labai geras",
+        "2": "Geras",
+        "3": "Patenkinamas",
+        "4": "Naudotas",
+        "5": "Labai naudotas",
+        New: "Naujas",
+        VeryGood: "Labai geras",
+        Good: "Geras",
+        Decent: "Patenkinamas",
+        Used: "Naudotas",
+        VeryUsed: "Labai naudotas",
     };
 
     function getConditionLabel(condition: string | number): string {
