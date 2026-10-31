@@ -36,7 +36,18 @@ export default function NavMenu() {
           >
             Mano daiktai
           </NavLink>
-
+            {
+                !loading && user && (
+                    <NavLink
+                to="/chats"
+                className = {({ isActive }) =>
+                `nav-link px-3 py-1 rounded ${isActive ? "active text-white" : "text-white-50"
+                    }`
+            }
+              >
+                Pokalbiai
+                </NavLink>
+            )}
           {!loading && (user ? (
             <>
               <span className="text-white-50 align-self-center small">{user.email}</span>
