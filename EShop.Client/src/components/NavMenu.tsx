@@ -34,27 +34,34 @@ export default function NavMenu() {
             to="/my-items" 
             className={({ isActive }) => `nav-link px-3 py-1 rounded ${isActive ? "active text-white" : "text-white-50"}`}
           >
-            Mano daiktai
-          </NavLink>
-            {
-                !loading && user && (
-                    <NavLink
-                to="/chats"
-                className = {({ isActive }) =>
-                `nav-link px-3 py-1 rounded ${isActive ? "active text-white" : "text-white-50"
-                    }`
-            }
-              >
-                Pokalbiai
-                </NavLink>
-            )}
-          {!loading && (user ? (
-            <>
-              <span className="text-white-50 align-self-center small">{user.email}</span>
-              <button
-                onClick={handleLogout}
-                className="nav-link px-3 py-1 rounded text-white-50 border-0 bg-transparent"
-              >
+    Mano daiktai
+        </NavLink>
+
+{
+    !loading && user && (
+        <NavLink
+      to="/chats"
+    className = {({ isActive }) =>
+    `nav-link px-3 py-1 rounded ${isActive ? "active text-white" : "text-white-50"
+        }`
+}
+    >
+    Pokalbiai
+    </NavLink>
+  )}
+
+{
+    !loading &&
+    (user ? (
+        <>
+        <span className= "text-white-50 align-self-center small" >
+        { user.email }
+        </span>
+
+        < button
+          onClick = { handleLogout }
+    className = "nav-link px-3 py-1 rounded text-white-50 border-0 bg-transparent"
+        >
                 Atsijungti
               </button>
             </>

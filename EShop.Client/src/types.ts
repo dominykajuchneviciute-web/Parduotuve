@@ -51,6 +51,7 @@ export interface Conversation {
     user1Id: string;
     user2Id: string;
     itemId: number;
+    itemName: string | null;
 }
 
 export interface ChatMessage {
