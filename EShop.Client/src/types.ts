@@ -27,6 +27,7 @@ export interface ItemDto {
     name: string;
     condition: number | string;
     description?: string | null;
+    ownerId?: string;
 
     itemType?: ItemCategory;
 
@@ -44,4 +45,34 @@ export interface ItemDto {
     shoeSize?: number | null;
 
     instrumentType?: string | null;
+}
+export interface Conversation {
+    id: number;
+    user1Id: string;
+    user2Id: string;
+    itemId: number;
+}
+
+export interface ChatMessage {
+    id: number;
+    conversationId: number;
+    senderId: string;
+    text: string;
+    sentAt: string;
+    isMine?: boolean;
+}
+
+export interface Conversation {
+    id: number;
+    user1Id: string;
+    user2Id: string;
+    itemId: number;
+}
+
+export interface ChatMessage {
+    id: number;
+    conversationId: number;
+    senderId: string;
+    text: string;
+    sentAt: string;
 }

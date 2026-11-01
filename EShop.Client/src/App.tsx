@@ -10,6 +10,7 @@ import Register from "./pages/Register";
 import Chats from "./pages/Chats";
 import ChatDetails from "./pages/ChatDetails";
 
+
 export default function App() {
   return (
     <AuthProvider>
@@ -23,7 +24,7 @@ export default function App() {
             <Route path="login" element={<Login />} />
             < Route path = "register" element = {< Register />} />
             < Route path = "chats" element = {< Chats />} />
-            < Route path = "chats/:id" element = {< ChatDetails />} />
+            < Route path = "chats/:conversationId" element = {< ChatDetails />} />
           </Route>
         </Routes>
       </BrowserRouter>

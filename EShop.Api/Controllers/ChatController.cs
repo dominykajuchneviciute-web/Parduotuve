@@ -38,6 +38,9 @@ public class ChatController : ControllerBase
         if (item == null)
             return NotFound("Prekė nerasta.");
 
+        if (string.IsNullOrWhiteSpace(item.OwnerId))
+            return BadRequest("Prekė neturi priskirto savininko.");
+
         if (item.OwnerId == currentUserId)
             return BadRequest("Negalite pradėti pokalbio su savimi.");
 
@@ -102,7 +105,8 @@ public class ChatController : ControllerBase
                 ConversationId = m.ConversationId,
                 SenderId = m.SenderId,
                 Text = m.Text,
-                SentAt = m.SentAt
+                SentAt = m.SentAt,
+                IsMine = m.SenderId == currentUserId
             })
             .ToListAsync();
 
@@ -145,7 +149,8 @@ public class ChatController : ControllerBase
             ConversationId = message.ConversationId,
             SenderId = message.SenderId,
             Text = message.Text,
-            SentAt = message.SentAt
+            SentAt = message.SentAt,
+            IsMine = true
         };
 
         return Ok(result);

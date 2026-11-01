@@ -7,4 +7,5 @@ public class MessageDto
     public string SenderId { get; set; } = null!;
     public string Text { get; set; } = null!;
     public DateTime SentAt { get; set; }
+    public bool IsMine { get; set; }
 }
