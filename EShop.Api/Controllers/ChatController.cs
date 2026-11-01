@@ -53,7 +53,14 @@ public class ChatController : ControllerBase
                   c.User2Id == currentUserId)));
 
         if (existingConversation != null)
+        {
+            existingConversation.User1DeletedAt = null;
+            existingConversation.User2DeletedAt = null;
+
+            await _context.SaveChangesAsync();
+
             return Ok(new { id = existingConversation.Id });
+        }
 
         var conversation = new Conversation
         {
@@ -75,8 +82,20 @@ public class ChatController : ControllerBase
 
         var conversations = await _context.Conversations
             .Where(c =>
-                c.User1Id == currentUserId ||
-                c.User2Id == currentUserId)
+                (c.User1Id == currentUserId && c.User1DeletedAt == null) ||
+                (c.User2Id == currentUserId && c.User2DeletedAt == null))
+            .Select(c => new
+            {
+                c.Id,
+                c.User1Id,
+                c.User2Id,
+                c.ItemId,
+
+                ItemName = _context.Items
+                    .Where(i => i.Id == c.ItemId)
+                    .Select(i => i.Name)
+                    .FirstOrDefault()
+            })
             .ToListAsync();
 
         return Ok(conversations);
@@ -115,8 +134,8 @@ public class ChatController : ControllerBase
 
     [HttpPost("conversations/{conversationId}/messages")]
     public async Task<IActionResult> SendMessage(
-        int conversationId,
-        [FromBody] SendMessageRequest request)
+    int conversationId,
+    [FromBody] SendMessageRequest request)
     {
         var currentUserId = GetCurrentUserId();
 
@@ -132,6 +151,11 @@ public class ChatController : ControllerBase
         if (conversation == null)
             return NotFound("Pokalbis nerastas.");
 
+        
+        conversation.User1DeletedAt = null;
+        conversation.User2DeletedAt = null;
+
+        
         var message = new Message
         {
             ConversationId = conversationId,
@@ -141,6 +165,7 @@ public class ChatController : ControllerBase
         };
 
         _context.Messages.Add(message);
+
         await _context.SaveChangesAsync();
 
         var result = new MessageDto
@@ -154,5 +179,34 @@ public class ChatController : ControllerBase
         };
 
         return Ok(result);
+    }
+
+    [HttpDelete("conversations/{conversationId}")]
+    public async Task<IActionResult> DeleteConversation(int conversationId)
+    {
+        var currentUserId = GetCurrentUserId();
+
+        var conversation = await _context.Conversations
+            .FirstOrDefaultAsync(c =>
+                c.Id == conversationId &&
+                (c.User1Id == currentUserId || c.User2Id == currentUserId));
+
+        if (conversation == null)
+        {
+            return NotFound("Pokalbis nerastas.");
+        }
+
+        if (conversation.User1Id == currentUserId)
+        {
+            conversation.User1DeletedAt = DateTime.UtcNow;
+        }
+        else
+        {
+            conversation.User2DeletedAt = DateTime.UtcNow;
+        }
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = "Pokalbis ištrintas." });
     }
 }

@@ -33,9 +33,15 @@ namespace EShop.Api.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime?>("User1DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("User1Id")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("User2DeletedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("User2Id")
                         .IsRequired()
