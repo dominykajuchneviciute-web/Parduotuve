@@ -81,6 +81,12 @@ namespace EShop.Api.Controllers
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
             item.OwnerId = userId;
 
             var createdItem = await _itemService.AddAsync(item);

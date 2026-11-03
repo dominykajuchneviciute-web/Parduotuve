@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using EShop.Api.Models;
 using EShop.Api.Models.Items;
+using EShop.Api.Models.Chat;
 namespace EShop.Api.Data;
 
 public class AppDbContext : IdentityDbContext<IdentityUser>
@@ -16,6 +17,8 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     public DbSet<ItemComment> ItemComments => Set<ItemComment>();
     public DbSet<ItemLike> ItemLikes => Set<ItemLike>();
     public DbSet<ItemSaved> ItemSaved => Set<ItemSaved>();
+    public DbSet<Conversation> Conversations => Set<Conversation>();
+    public DbSet<Message> Messages => Set<Message>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
