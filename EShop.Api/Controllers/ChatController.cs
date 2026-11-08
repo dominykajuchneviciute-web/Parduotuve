@@ -6,6 +6,8 @@ using System.Security.Claims;
 using EShop.Api.Data;
 using EShop.Api.Models.Chat;
 using EShop.Api.DTOs.Chat;
+using Microsoft.AspNetCore.SignalR;
+using EShop.Api.Hubs;
 
 namespace EShop.Api.Controllers;
 
@@ -15,10 +17,12 @@ namespace EShop.Api.Controllers;
 public class ChatController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IHubContext<ChatHub> _hubContext;
 
-    public ChatController(AppDbContext context)
+    public ChatController(AppDbContext context, IHubContext<ChatHub> hubContext)
     {
         _context = context;
+        _hubContext = hubContext;
     }
 
     private string GetCurrentUserId()
@@ -151,11 +155,9 @@ public class ChatController : ControllerBase
         if (conversation == null)
             return NotFound("Pokalbis nerastas.");
 
-        
         conversation.User1DeletedAt = null;
         conversation.User2DeletedAt = null;
 
-        
         var message = new Message
         {
             ConversationId = conversationId,
@@ -177,6 +179,10 @@ public class ChatController : ControllerBase
             SentAt = message.SentAt,
             IsMine = true
         };
+
+        await _hubContext.Clients
+            .Group($"conversation_{conversationId}")
+            .SendAsync("ReceiveMessage", result);
 
         return Ok(result);
     }

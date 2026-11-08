@@ -5,6 +5,7 @@ using EShop.Api.Services;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi;
+using EShop.Api.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>()
 builder.Services.AddScoped<ItemService>();
 builder.Services.AddScoped<ItemFileLoader>();
 builder.Services.AddScoped<CommentLikeService>();
+builder.Services.AddSignalR();
 
 builder.Services.AddCors(options =>
 {
@@ -75,6 +77,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHub<ChatHub>("/hubs/chat");
 
 var auth = app.MapGroup("/api/auth");//this has to stay
 auth.MapIdentityApi<IdentityUser>();
