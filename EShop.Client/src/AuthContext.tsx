@@ -3,7 +3,10 @@ import type { ReactNode } from "react";
 
 const API = "http://localhost:5145/api/auth";
 
-type User = { email: string };
+type User = {
+    id: string;
+    email: string;
+};
 
 type AuthContextType = {
   user: User | null;
@@ -32,10 +35,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function loadUser() {
     try {
-      const res = await fetch(`${API}/manage/info`, { credentials: "include" });
+        const res = await fetch(`${API}/me`, {
+            credentials: "include"
+        });
       if (res.ok) {
-        const data = await res.json();
-        setUser({ email: data.email });
+          const data = await res.json();
+          console.log("Prisijungęs vartotojas:", data);
+          setUser({
+              id: data.id,
+              email: data.email
+          });
       } else {
         setUser(null);
       }
