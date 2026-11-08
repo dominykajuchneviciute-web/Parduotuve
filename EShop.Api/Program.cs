@@ -28,6 +28,7 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>()
 builder.Services.AddScoped<ItemService>();
 builder.Services.AddScoped<ItemFileLoader>();
 builder.Services.AddScoped<CommentLikeService>();
+builder.Services.AddScoped<ChatService>();
 builder.Services.AddSignalR();
 
 builder.Services.AddCors(options =>
