@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using EShop.Api.Models;
+using System.Text.Json;
 using EShop.Api.Tests.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
@@ -15,9 +15,9 @@ public class GetItemsTests(WebApplicationFactory<Program> factory) : Integration
         var response = await Client.GetAsync("/api/items");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var items = await response.Content.ReadFromJsonAsync<List<Item>>();
-        Assert.NotNull(items);
-        Assert.Empty(items);
+        using var doc = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
+        Assert.Equal(JsonValueKind.Array, doc.RootElement.ValueKind);
+        Assert.Equal(0, doc.RootElement.GetArrayLength());
     }
 
     [Fact]
