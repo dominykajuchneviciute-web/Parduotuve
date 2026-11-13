@@ -85,3 +85,5 @@ auth.MapIdentityApi<IdentityUser>();
 
 app.MapControllers();
 app.Run();
+
+public partial class Program { }
