@@ -3,7 +3,6 @@ using System.Net.Http.Json;
 using EShop.Api.DTO;
 using EShop.Api.Tests.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Xunit;
 
 namespace EShop.Api.Tests.Items;
 

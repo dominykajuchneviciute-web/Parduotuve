@@ -4,7 +4,6 @@ using System.Text.Json;
 using EShop.Api.DTO;
 using EShop.Api.Tests.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Xunit;
 
 namespace EShop.Api.Tests.Items;
 
@@ -30,6 +29,9 @@ public class CreateItemSuccessTests(WebApplicationFactory<Program> factory) : In
     [InlineData("Clothing", "Megztinis")]
     [InlineData("Electronics", "Ausines")]
     [InlineData("Furniture", "Kede")]
+    [InlineData("Transport", "Dviratis")]
+    [InlineData("Footwear", "Batai")]
+    [InlineData("Instrument", "Gitara")]
     public async Task CreateItem_SupportedCategories_ReturnsCreated(string category, string name)
     {
         var response = await AuthClient.PostAsJsonAsync("/api/items", new CreateItemRequest { Category = category, Name = name });
