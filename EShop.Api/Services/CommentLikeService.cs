@@ -48,6 +48,19 @@ public class CommentLikeService
         return true;
     }
 
+    public async Task<bool> DeleteCommentAsModeratorAsync(int commentId)
+    {
+        var comment = await _context.ItemComments.FirstOrDefaultAsync(c => c.Id == commentId);
+        if (comment is null)
+        {
+            return false;
+        }
+
+        _context.ItemComments.Remove(comment);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
     public async Task<bool> ToggleLikeAsync(int itemId, string userId)
     {
         var existingLike = await _context.ItemLikes.FirstOrDefaultAsync(l => l.ItemId == itemId && l.UserId == userId);

@@ -112,6 +112,28 @@ public class ItemService
         return true;
     }
 
+    public async Task<bool> DeleteAsModeratorAsync(int id)
+    {
+        var item = await _context.Items.FirstOrDefaultAsync(item => item.Id == id);
+        if (item is null)
+        {
+            return false;
+        }
+
+        var reports = _context.ItemReports.Where(report => report.ItemId == id);
+        var comments = _context.ItemComments.Where(comment => comment.ItemId == id);
+        var likes = _context.ItemLikes.Where(like => like.ItemId == id);
+        var savedItems = _context.ItemSaved.Where(saved => saved.ItemId == id);
+
+        _context.ItemReports.RemoveRange(reports);
+        _context.ItemComments.RemoveRange(comments);
+        _context.ItemLikes.RemoveRange(likes);
+        _context.ItemSaved.RemoveRange(savedItems);
+        _context.Items.Remove(item);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
     private static IQueryable<Clothing> ApplyClothingFilters(
         IQueryable<Clothing> query,
         ItemFilter filter)

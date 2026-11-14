@@ -98,11 +98,14 @@ namespace EShop.Api.Controllers
 
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteItem(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var deleted = await _itemService.DeleteAsync(id, userId!);
+            var deleted = User.IsInRole("Moderator")
+                ? await _itemService.DeleteAsModeratorAsync(id)
+                : await _itemService.DeleteAsync(id, userId!);
 
             if (!deleted)
             {
