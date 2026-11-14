@@ -31,7 +31,8 @@ namespace EShop.Api.Controllers
             return Ok(new
             {
                 id = user.Id,
-                email = user.Email
+                email = user.Email,
+                roles = await _userManager.GetRolesAsync(user)
             });
         }
 

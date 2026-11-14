@@ -24,11 +24,13 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 builder.Services.AddScoped<ItemService>();
 builder.Services.AddScoped<ItemFileLoader>();
 builder.Services.AddScoped<CommentLikeService>();
 builder.Services.AddScoped<ChatService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddSignalR();
 
 builder.Services.AddCors(options =>
@@ -61,6 +63,15 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    if (!await roleManager.RoleExistsAsync("Moderator"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("Moderator"));
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {

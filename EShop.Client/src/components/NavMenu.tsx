@@ -37,6 +37,15 @@ export default function NavMenu() {
     Mano daiktai
         </NavLink>
 
+        {user?.roles.includes("Moderator") && (
+          <NavLink
+            to="/moderation"
+            className={({ isActive }) => `nav-link px-3 py-1 rounded ${isActive ? "active text-white" : "text-white-50"}`}
+          >
+            Moderavimas
+          </NavLink>
+        )}
+
 {
     !loading && user && (
         <NavLink
