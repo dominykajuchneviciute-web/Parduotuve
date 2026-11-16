@@ -47,11 +47,48 @@ public sealed class ReportsController : ControllerBase
         }
     }
 
+    [Authorize]
+    [HttpPost("/api/comments/{commentId:int}/reports")]
+    public async Task<IActionResult> ReportComment(int commentId, CreateReportRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Reason))
+        {
+            return BadRequest("Pranešimo priežastis yra privaloma.");
+        }
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+
+        try
+        {
+            await _reportService.ReportCommentAsync(commentId, userId, request.Reason);
+            return Ok();
+        }
+        catch (ModerationException exception)
+        {
+            return Conflict(exception.Message);
+        }
+        catch (KeyNotFoundException exception)
+        {
+            return NotFound(exception.Message);
+        }
+    }
+
     [Authorize(Roles = "Moderator")]
     [HttpGet]
     public async Task<ActionResult<List<ReportedItemResponse>>> GetReportedItems()
     {
         return Ok(await _reportService.GetReportedItemsAsync());
+    }
+
+    [Authorize(Roles = "Moderator")]
+    [HttpGet("comments")]
+    public async Task<ActionResult<List<ReportedCommentResponse>>> GetReportedComments()
+    {
+        return Ok(await _reportService.GetReportedCommentsAsync());
     }
 
     [Authorize(Roles = "Moderator")]

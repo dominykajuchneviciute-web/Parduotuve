@@ -43,6 +43,8 @@ public class CommentLikeService
             return false;
         }
 
+        _context.ItemReports.RemoveRange(
+            _context.ItemReports.Where(report => report.CommentId == commentId));
         _context.ItemComments.Remove(comment);
         await _context.SaveChangesAsync();
         return true;
@@ -56,6 +58,8 @@ public class CommentLikeService
             return false;
         }
 
+        _context.ItemReports.RemoveRange(
+            _context.ItemReports.Where(report => report.CommentId == commentId));
         _context.ItemComments.Remove(comment);
         await _context.SaveChangesAsync();
         return true;

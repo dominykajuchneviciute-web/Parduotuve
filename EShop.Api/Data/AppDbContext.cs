@@ -36,7 +36,12 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
         modelBuilder.Entity<ItemReport>()
             .HasIndex(report => new { report.ItemId, report.ReporterId, report.Status })
             .IsUnique()
-            .HasFilter("\"Status\" = 'Active'");
+            .HasFilter("\"ItemId\" IS NOT NULL AND \"Status\" = 'Active'");
+
+        modelBuilder.Entity<ItemReport>()
+            .HasIndex(report => new { report.CommentId, report.ReporterId, report.Status })
+            .IsUnique()
+            .HasFilter("\"CommentId\" IS NOT NULL AND \"Status\" = 'Active'");
 
         modelBuilder.Entity<ItemReport>()
             .Property(report => report.Status)

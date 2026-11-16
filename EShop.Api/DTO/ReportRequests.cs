@@ -12,7 +12,15 @@ public sealed record ReportedItemResponse(
 
 public sealed record ReportResponse(
     int Id,
-    int ItemId,
+    int? ItemId,
     string Reason,
     DateTime CreatedAt,
     string Status);
+
+public sealed record ReportedCommentResponse(
+    int CommentId,
+    int ItemId,
+    string ItemName,
+    string CommentText,
+    int ReportCount,
+    IReadOnlyList<ReportResponse> Reports);

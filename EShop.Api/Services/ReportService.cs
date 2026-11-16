@@ -49,20 +49,56 @@ public sealed class ReportService : IReportService
         }
     }
 
+    public async Task ReportCommentAsync(int commentId, string reporterId, string reason)
+    {
+        var comment = await _context.ItemComments
+            .FirstOrDefaultAsync(comment => comment.Id == commentId);
+
+        if (comment is null)
+        {
+            throw new KeyNotFoundException("Komentaras nerastas.");
+        }
+
+        if (await _context.ItemReports.AnyAsync(report =>
+                report.CommentId == commentId &&
+                report.ReporterId == reporterId &&
+                report.Status == ReportStatus.Active))
+        {
+            throw new ModerationException("Apie šį komentarą jau pranešėte.");
+        }
+
+        _context.ItemReports.Add(new ItemReport
+        {
+            CommentId = commentId,
+            ReporterId = reporterId,
+            Reason = reason.Trim()
+        });
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException exception) when (exception.InnerException is PostgresException postgresException &&
+                                                  postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
+        {
+            throw new ModerationException("Apie šį komentarą jau pranešėte.");
+        }
+    }
+
     public async Task<List<ReportedItemResponse>> GetReportedItemsAsync()
     {
         var reports = await _context.ItemReports
-            .Where(report => report.Status == ReportStatus.Active)
+            .Where(report => report.Status == ReportStatus.Active && report.ItemId.HasValue)
             .OrderByDescending(report => report.CreatedAt)
             .ToListAsync();
 
-        var itemIds = reports.Select(report => report.ItemId).Distinct().ToList();
+        var itemIds = reports.Select(report => report.ItemId!.Value).Distinct().ToList();
         var items = await _context.Items
             .Where(item => itemIds.Contains(item.Id))
             .ToDictionaryAsync(item => item.Id);
 
         return reports
-            .GroupBy(report => report.ItemId)
+            .GroupBy(report => report.ItemId!.Value)
             .Where(group => items.ContainsKey(group.Key))
             .Select(group =>
             {
@@ -72,6 +108,47 @@ public sealed class ReportService : IReportService
                     item.Name,
                     item.Description,
                     item.OwnerId,
+                    group.Count(),
+                    group.Select(report => new ReportResponse(
+                        report.Id,
+                        report.ItemId,
+                        report.Reason,
+                        report.CreatedAt,
+                        report.Status.ToString())).ToList());
+            })
+            .ToList();
+    }
+
+    public async Task<List<ReportedCommentResponse>> GetReportedCommentsAsync()
+    {
+        var reports = await _context.ItemReports
+            .Where(report => report.Status == ReportStatus.Active && report.CommentId.HasValue)
+            .OrderByDescending(report => report.CreatedAt)
+            .ToListAsync();
+
+        var commentIds = reports.Select(report => report.CommentId!.Value).Distinct().ToList();
+        var comments = await _context.ItemComments
+            .Where(comment => commentIds.Contains(comment.Id))
+            .ToDictionaryAsync(comment => comment.Id);
+
+        var itemIds = comments.Values.Select(comment => comment.ItemId).Distinct().ToList();
+        var items = await _context.Items
+            .Where(item => itemIds.Contains(item.Id))
+            .ToDictionaryAsync(item => item.Id);
+
+        return reports
+            .GroupBy(report => report.CommentId!.Value)
+            .Where(group => comments.ContainsKey(group.Key) &&
+                            items.ContainsKey(comments[group.Key].ItemId))
+            .Select(group =>
+            {
+                var comment = comments[group.Key];
+                var item = items[comment.ItemId];
+                return new ReportedCommentResponse(
+                    comment.Id,
+                    item.Id,
+                    item.Name,
+                    comment.Text,
                     group.Count(),
                     group.Select(report => new ReportResponse(
                         report.Id,

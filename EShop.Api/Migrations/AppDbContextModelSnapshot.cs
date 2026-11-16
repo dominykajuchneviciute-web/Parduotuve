@@ -171,10 +171,13 @@ namespace EShop.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CommentId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("ItemId")
+                    b.Property<int?>("ItemId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Reason")
@@ -194,9 +197,13 @@ namespace EShop.Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CommentId", "ReporterId", "Status")
+                        .IsUnique()
+                        .HasFilter("\"CommentId\" IS NOT NULL AND \"Status\" = 'Active'");
+
                     b.HasIndex("ItemId", "ReporterId", "Status")
                         .IsUnique()
-                        .HasFilter("\"Status\" = 'Active'");
+                        .HasFilter("\"ItemId\" IS NOT NULL AND \"Status\" = 'Active'");
 
                     b.ToTable("ItemReports");
                 });

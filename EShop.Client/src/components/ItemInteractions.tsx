@@ -24,6 +24,8 @@ export const ItemInteractions: React.FC<Props> = ({ itemId }) => {
     const [error, setError] = useState<string | null>(null);
     const [reportReason, setReportReason] = useState('');
     const [showReportForm, setShowReportForm] = useState(false);
+    const [commentReportId, setCommentReportId] = useState<number | null>(null);
+    const [commentReportReason, setCommentReportReason] = useState('');
 
     useEffect(() => {
         fetchLikes();
@@ -147,6 +149,28 @@ export const ItemInteractions: React.FC<Props> = ({ itemId }) => {
         }
     };
 
+    const handleReportComment = async (e: React.FormEvent, commentId: number) => {
+        e.preventDefault();
+        if (!commentReportReason.trim()) return;
+
+        const res = await fetch(`http://localhost:5145/api/comments/${commentId}/reports`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ reason: commentReportReason }),
+        });
+
+        if (res.ok) {
+            setCommentReportId(null);
+            setCommentReportReason('');
+            setError('Komentaro pranešimas išsiųstas moderatoriui.');
+        } else if (res.status === 409) {
+            setError('Šį komentarą jau pranešėte.');
+        } else if (res.status === 401) {
+            setError('Norėdami pranešti, turite prisijungti.');
+        }
+    };
+
     return (
         <div className="mt-3 pt-3 border-top">
             <div className="d-flex align-items-center gap-2 mb-2">
@@ -187,25 +211,51 @@ export const ItemInteractions: React.FC<Props> = ({ itemId }) => {
                 ) : (
                     <div className="d-flex flex-column gap-2" style={{ maxHeight: '180px', overflowY: 'auto' }}>
                         {comments.map((c) => (
-                            <div key={c.id} className="bg-light p-2 rounded small d-flex justify-content-between align-items-start">
+                            <React.Fragment key={c.id}>
+                            <div className="bg-light p-2 rounded small d-flex justify-content-between align-items-start">
                                 <div>
                                     <div>{c.text}</div>
                                     <div className="text-muted" style={{ fontSize: '11px' }}>
                                         {new Date(c.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </div>
                                 </div>
-                                {user && (c.isOwner || user.roles.includes("Moderator")) && (
-                                    <button
-                                        type="button"
-                                        onClick={() => handleDeleteComment(c.id)}
-                                        className="btn btn-outline-secondary btn-sm border-0 py-0 px-1 text-danger"
-                                        title="Ištrinti komentarą"
-                                        style={{ fontSize: '12px' }}
-                                    >
-                                        ✕
-                                    </button>
+                                {user && (
+                                    <div className="d-flex gap-1">
+                                        {(c.isOwner || user.roles.includes("Moderator")) && (
+                                            <button
+                                                type="button"
+                                                onClick={() => handleDeleteComment(c.id)}
+                                                className="btn btn-outline-secondary btn-sm border-0 py-0 px-1 text-danger"
+                                                title="Ištrinti komentarą"
+                                                style={{ fontSize: '12px' }}
+                                            >
+                                                ✕
+                                            </button>
+                                        )}
+                                        <button
+                                            type="button"
+                                            onClick={() => setCommentReportId(commentReportId === c.id ? null : c.id)}
+                                            className="btn btn-outline-warning btn-sm border-0 py-0 px-1"
+                                            title="Pranešti apie komentarą"
+                                            style={{ fontSize: '12px' }}
+                                        >
+                                            !
+                                        </button>
+                                    </div>
                                 )}
                             </div>
+                            {user && commentReportId === c.id && (
+                                <form onSubmit={(e) => void handleReportComment(e, c.id)} className="d-flex gap-2">
+                                    <input
+                                        className="form-control form-control-sm"
+                                        value={commentReportReason}
+                                        onChange={(e) => setCommentReportReason(e.target.value)}
+                                        placeholder="Pranešimo priežastis"
+                                    />
+                                    <button className="btn btn-warning btn-sm" type="submit">Pranešti</button>
+                                </form>
+                            )}
+                            </React.Fragment>
                         ))}
                     </div>
                 )}
