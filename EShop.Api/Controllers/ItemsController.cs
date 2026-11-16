@@ -1,5 +1,4 @@
 using EShop.Api.Models;
-using EShop.Api.Models.Items;
 using EShop.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -120,9 +119,20 @@ namespace EShop.Api.Controllers
                 return BadRequest("File is empty.");
             }
 
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
             await using var stream = file.OpenReadStream();
 
             var items = await _itemFileLoader.LoadAsync(stream);
+
+            foreach (var item in items)
+            {
+                item.OwnerId = userId;
+            }
 
             var savedItems = await _itemService.AddRangeAsync(items);
 
