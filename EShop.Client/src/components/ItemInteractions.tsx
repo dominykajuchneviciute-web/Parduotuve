@@ -232,7 +232,7 @@ export const ItemInteractions: React.FC<Props> = ({ itemId }) => {
                                                 ✕
                                             </button>
                                         )}
-                                        <button
+                                        {!c.isOwner && <button
                                             type="button"
                                             onClick={() => setCommentReportId(commentReportId === c.id ? null : c.id)}
                                             className="btn btn-outline-warning btn-sm border-0 py-0 px-1"
@@ -240,7 +240,7 @@ export const ItemInteractions: React.FC<Props> = ({ itemId }) => {
                                             style={{ fontSize: '12px' }}
                                         >
                                             !
-                                        </button>
+                                        </button>}
                                     </div>
                                 )}
                             </div>

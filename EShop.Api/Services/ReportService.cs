@@ -59,6 +59,11 @@ public sealed class ReportService : IReportService
             throw new KeyNotFoundException("Komentaras nerastas.");
         }
 
+        if (comment.UserId == reporterId)
+        {
+            throw new ModerationException("Negalite pranešti apie savo komentarą.");
+        }
+
         if (await _context.ItemReports.AnyAsync(report =>
                 report.CommentId == commentId &&
                 report.ReporterId == reporterId &&
