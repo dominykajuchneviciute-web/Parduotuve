@@ -1,5 +1,6 @@
 using EShop.Api.Data;
 using EShop.Api.Models;
+using EShop.Api.Generics;
 using EShop.Api.Models.Items;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,10 +9,35 @@ namespace EShop.Api.Services;
 public class ItemService
 {
     private readonly AppDbContext _context;
+    private readonly ItemFilterRegistry<Item> _filterRegistry = new();
 
     public ItemService(AppDbContext context)
     {
         _context = context;
+
+        _filterRegistry.Register<Clothing>(
+        "clothing",
+        ApplyClothingFilters);
+
+        _filterRegistry.Register<Electronics>(
+            "electronics",
+            ApplyElectronicsFilters);
+
+        _filterRegistry.Register<Furniture>(
+            "furniture",
+            ApplyFurnitureFilters);
+
+        _filterRegistry.Register<Transport>(
+            "transport",
+            ApplyTransportFilters);
+
+        _filterRegistry.Register<Footwear>(
+            "footwear",
+            ApplyFootwearFilters);
+
+        _filterRegistry.Register<Instrument>(
+            "instrument",
+            ApplyInstrumentFilters);
     }
 
     public async Task<List<Item>> GetAllAsync()
@@ -36,39 +62,7 @@ public class ItemService
 
         var itemType = filter.ItemType?.Trim().ToLowerInvariant();
 
-        switch (itemType)
-        {
-            case null:
-            case "":
-                break;
-            case "clothing":
-                query = ApplyClothingFilters(query.OfType<Clothing>(), filter)
-                    .Cast<Item>();
-                break;
-            case "electronics":
-                query = ApplyElectronicsFilters(query.OfType<Electronics>(), filter)
-                    .Cast<Item>();
-                break;
-            case "furniture":
-                query = ApplyFurnitureFilters(query.OfType<Furniture>(), filter)
-                    .Cast<Item>();
-                break;
-            case "transport":
-                query = ApplyTransportFilters(query.OfType<Transport>(), filter)
-                    .Cast<Item>();
-                break;
-            case "footwear":
-                query = ApplyFootwearFilters(query.OfType<Footwear>(), filter)
-                    .Cast<Item>();
-                break;
-            case "instrument":
-                query = ApplyInstrumentFilters(query.OfType<Instrument>(), filter)
-                    .Cast<Item>();
-                break;
-            default:
-                throw new ArgumentException(
-                    "Unknown item type. Allowed values: Clothing, Electronics, Furniture, Transport, Footwear, Instrument.");
-        }
+        query = _filterRegistry.Apply(query, itemType, filter);
 
         return await query.ToListAsync();
     }
