@@ -43,6 +43,23 @@ public class CommentLikeService
             return false;
         }
 
+        _context.ItemReports.RemoveRange(
+            _context.ItemReports.Where(report => report.CommentId == commentId));
+        _context.ItemComments.Remove(comment);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> DeleteCommentAsModeratorAsync(int commentId)
+    {
+        var comment = await _context.ItemComments.FirstOrDefaultAsync(c => c.Id == commentId);
+        if (comment is null)
+        {
+            return false;
+        }
+
+        _context.ItemReports.RemoveRange(
+            _context.ItemReports.Where(report => report.CommentId == commentId));
         _context.ItemComments.Remove(comment);
         await _context.SaveChangesAsync();
         return true;

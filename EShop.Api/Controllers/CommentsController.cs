@@ -68,7 +68,9 @@ public class ItemInteractionsController : ControllerBase
         if (string.IsNullOrEmpty(userId))
             return Unauthorized();
 
-        var deleted = await _service.DeleteCommentAsync(commentId, userId);
+        var deleted = User.IsInRole("Moderator")
+            ? await _service.DeleteCommentAsModeratorAsync(commentId)
+            : await _service.DeleteCommentAsync(commentId, userId);
 
         if (!deleted)
         {

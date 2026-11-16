@@ -6,6 +6,7 @@ const API = "http://localhost:5145/api/auth";
 type User = {
     id: string;
     email: string;
+    roles: string[];
 };
 
 type AuthContextType = {
@@ -40,10 +41,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         });
       if (res.ok) {
           const data = await res.json();
-          console.log("Prisijungęs vartotojas:", data);
           setUser({
               id: data.id,
-              email: data.email
+              email: data.email,
+              roles: data.roles ?? []
           });
       } else {
         setUser(null);

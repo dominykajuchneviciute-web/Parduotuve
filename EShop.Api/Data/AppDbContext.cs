@@ -19,6 +19,7 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     public DbSet<ItemSaved> ItemSaved => Set<ItemSaved>();
     public DbSet<Conversation> Conversations => Set<Conversation>();
     public DbSet<Message> Messages => Set<Message>();
+    public DbSet<ItemReport> ItemReports => Set<ItemReport>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,5 +32,19 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
             .HasValue<Transport>("Transport")
             .HasValue<Footwear>("Footwear")
             .HasValue<Instrument>("Instrument");
+
+        modelBuilder.Entity<ItemReport>()
+            .HasIndex(report => new { report.ItemId, report.ReporterId, report.Status })
+            .IsUnique()
+            .HasFilter("\"ItemId\" IS NOT NULL AND \"Status\" = 'Active'");
+
+        modelBuilder.Entity<ItemReport>()
+            .HasIndex(report => new { report.CommentId, report.ReporterId, report.Status })
+            .IsUnique()
+            .HasFilter("\"CommentId\" IS NOT NULL AND \"Status\" = 'Active'");
+
+        modelBuilder.Entity<ItemReport>()
+            .Property(report => report.Status)
+            .HasConversion<string>();
     }
 }

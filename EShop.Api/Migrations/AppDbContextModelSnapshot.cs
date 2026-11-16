@@ -163,6 +163,51 @@ namespace EShop.Api.Migrations
                     b.ToTable("ItemLikes");
                 });
 
+            modelBuilder.Entity("EShop.Api.Models.ItemReport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CommentId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("ItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ReporterId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId", "ReporterId", "Status")
+                        .IsUnique()
+                        .HasFilter("\"CommentId\" IS NOT NULL AND \"Status\" = 'Active'");
+
+                    b.HasIndex("ItemId", "ReporterId", "Status")
+                        .IsUnique()
+                        .HasFilter("\"ItemId\" IS NOT NULL AND \"Status\" = 'Active'");
+
+                    b.ToTable("ItemReports");
+                });
+
             modelBuilder.Entity("EShop.Api.Models.ItemSaved", b =>
                 {
                     b.Property<int>("Id")

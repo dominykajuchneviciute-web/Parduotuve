@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import type { ItemCategory, ItemDto, ItemFilterState } from "../types";
+import { useAuth } from "../AuthContext";
 
 const categoryLabels: Record<ItemCategory, string> = {
   Clothing: "Drabužiai",
@@ -53,6 +54,7 @@ function getConditionLabel(condition: string | number): string {
     return conditionLabels[String(condition)] ?? String(condition);
 }
 export default function Items() {
+  const { user } = useAuth();
   const [allItems, setAllItems] = useState<ItemDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -136,6 +138,22 @@ export default function Items() {
 
   const getCategoryLabel = (item: ItemDto): string =>
     item.itemType ? categoryLabels[item.itemType] : "Daiktas";
+
+  const deleteItem = async (itemId: number) => {
+    if (!window.confirm("Ar tikrai norite ištrinti šį skelbimą?")) return;
+
+    const response = await fetch(`http://localhost:5145/api/items/${itemId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      setAllItems((current) => current.filter((item) => item.id !== itemId));
+      return;
+    }
+
+    setErrorMessage("Nepavyko ištrinti skelbimo.");
+  };
   return (
     <div className="container mt-4">
       <div className="row">
@@ -523,6 +541,15 @@ export default function Items() {
                     <Link to={`/item/${item.id}`} className="btn btn-outline-primary btn-sm w-100 mt-2">
                       Peržiūrėti pasiūlymą
                     </Link>
+                    {user?.roles.includes("Moderator") && (
+                      <button
+                        type="button"
+                        className="btn btn-outline-danger btn-sm w-100 mt-2"
+                        onClick={() => void deleteItem(item.id)}
+                      >
+                        Ištrinti skelbimą
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

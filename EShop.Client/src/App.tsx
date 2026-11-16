@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Chats from "./pages/Chats";
 import ChatDetails from "./pages/ChatDetails";
+import Moderation from "./pages/Moderation";
 
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
             < Route path = "register" element = {< Register />} />
             < Route path = "chats" element = {< Chats />} />
             < Route path = "chats/:conversationId" element = {< ChatDetails />} />
+            <Route path="moderation" element={<Moderation />} />
           </Route>
         </Routes>
       </BrowserRouter>
