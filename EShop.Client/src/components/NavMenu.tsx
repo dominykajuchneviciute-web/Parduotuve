@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
+import OnlineUsers from "./OnlineUsers";
 
 export default function NavMenu() {
   const { user, loading, logout } = useAuth();
@@ -63,6 +64,7 @@ export default function NavMenu() {
     !loading &&
     (user ? (
         <>
+        <OnlineUsers />
         <span className= "text-white-50 align-self-center small" >
         { user.email }
         </span>

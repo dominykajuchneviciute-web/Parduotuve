@@ -32,6 +32,7 @@ builder.Services.AddScoped<CommentLikeService>();
 builder.Services.AddScoped<ChatService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<OnlineUserTracker>();
 
 builder.Services.AddCors(options =>
 {
@@ -90,6 +91,7 @@ if (!app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapHub<ChatHub>("/hubs/chat");
+app.MapHub<PresenceHub>("/hubs/presence");
 
 var auth = app.MapGroup("/api/auth");//this has to stay
 auth.MapIdentityApi<IdentityUser>();
