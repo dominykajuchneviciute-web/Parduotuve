@@ -2,46 +2,45 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EShop.Api.Controllers
+namespace EShop.Api.Controllers;
+
+[Route("api/auth")]
+[ApiController]
+public class AuthController : ControllerBase
 {
-    [Route("api/auth")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly UserManager<IdentityUser> _userManager;
+
+    public AuthController(
+        SignInManager<IdentityUser> signInManager,
+        UserManager<IdentityUser> userManager)
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        _signInManager = signInManager;
+        _userManager = userManager;
+    }
 
-        public AuthController(
-            SignInManager<IdentityUser> signInManager,
-            UserManager<IdentityUser> userManager)
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<IActionResult> GetCurrentUser()
+    {
+        var user = await _userManager.GetUserAsync(User);
+
+        if (user == null)
+            return Unauthorized();
+
+        return Ok(new
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
-        }
+            id = user.Id,
+            email = user.Email,
+            roles = await _userManager.GetRolesAsync(user)
+        });
+    }
 
-        [Authorize]
-        [HttpGet("me")]
-        public async Task<IActionResult> GetCurrentUser()
-        {
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-                return Unauthorized();
-
-            return Ok(new
-            {
-                id = user.Id,
-                email = user.Email,
-                roles = await _userManager.GetRolesAsync(user)
-            });
-        }
-
-        [Authorize]
-        [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return Ok();
-        }
+    [Authorize]
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await _signInManager.SignOutAsync();
+        return Ok();
     }
 }
