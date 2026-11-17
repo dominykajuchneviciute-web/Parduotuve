@@ -7,139 +7,138 @@ using EShop.Api.Factories;
 using EShop.Api.DTO;
 
 
-namespace EShop.Api.Controllers
+namespace EShop.Api.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class ItemsController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ItemsController : ControllerBase
+    private readonly ItemService _itemService;
+    private readonly ItemFileLoader _itemFileLoader;
+
+    public ItemsController(ItemService itemService, ItemFileLoader itemFileLoader)
     {
-        private readonly ItemService _itemService;
-        private readonly ItemFileLoader _itemFileLoader;
+        _itemService = itemService;
+        _itemFileLoader = itemFileLoader;
+    }
 
-        public ItemsController(ItemService itemService, ItemFileLoader itemFileLoader)
+    [HttpGet]
+    public async Task<ActionResult<List<Item>>> GetItems(
+        [FromQuery] ItemFilter filter)
+    {
+        try
         {
-            _itemService = itemService;
-            _itemFileLoader = itemFileLoader;
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<List<Item>>> GetItems(
-            [FromQuery] ItemFilter filter)
-        {
-            try
-            {
-                var items = await _itemService.GetFilteredAsync(filter);
-                return Ok(items);
-            }
-            catch (ArgumentException exception)
-            {
-                return BadRequest(exception.Message);
-            }
-        }
-
-        [Authorize]
-        [HttpGet("mine")]
-        public async Task<ActionResult<List<Item>>> GetMyItems()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var items = await _itemService.GetByOwnerAsync(userId!);
+            var items = await _itemService.GetFilteredAsync(filter);
             return Ok(items);
         }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Item>> GetItem(int id)
+        catch (ArgumentException exception)
         {
-            var item = await _itemService.GetByIdAsync(id);
+            return BadRequest(exception.Message);
+        }
+    }
 
-            if (item is null)
-            {
-                return NotFound();
-            }
+    [Authorize]
+    [HttpGet("mine")]
+    public async Task<ActionResult<List<Item>>> GetMyItems()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var items = await _itemService.GetByOwnerAsync(userId!);
+        return Ok(items);
+    }
 
-            return Ok(item);
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Item>> GetItem(int id)
+    {
+        var item = await _itemService.GetByIdAsync(id);
+
+        if (item is null)
+        {
+            return NotFound();
         }
 
-        [Authorize]
-        [HttpPost]
-        public async Task<ActionResult<Item>> CreateItem(CreateItemRequest request)
+        return Ok(item);
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<ActionResult<Item>> CreateItem(CreateItemRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Name))
         {
-            if (string.IsNullOrWhiteSpace(request.Name))
-            {
-                return BadRequest("Prekės pavadinimas yra privalomas.");
-            }
+            return BadRequest("Prekės pavadinimas yra privalomas.");
+        }
 
-            Item item;
+        Item item;
 
-            try
-            {
-                item = ItemFactory.Create(request);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+        try
+        {
+            item = ItemFactory.Create(request);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized();
-            }
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
 
+        item.OwnerId = userId;
+
+        var createdItem = await _itemService.AddAsync(item);
+
+        return CreatedAtAction(
+            nameof(GetItem),
+            new { id = createdItem.Id },
+            createdItem);
+
+    }
+
+    [Authorize]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteItem(int id)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var deleted = User.IsInRole("Moderator")
+            ? await _itemService.DeleteAsModeratorAsync(id)
+            : await _itemService.DeleteAsync(id, userId!);
+
+        if (!deleted)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+
+    [HttpPost("upload")]
+    public async Task<IActionResult> UploadItems(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest("File is empty.");
+        }
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+
+        await using var stream = file.OpenReadStream();
+
+        var items = await _itemFileLoader.LoadAsync(stream);
+
+        foreach (var item in items)
+        {
             item.OwnerId = userId;
-
-            var createdItem = await _itemService.AddAsync(item);
-
-            return CreatedAtAction(
-                nameof(GetItem),
-                new { id = createdItem.Id },
-                createdItem);
-
         }
 
-        [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteItem(int id)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var deleted = User.IsInRole("Moderator")
-                ? await _itemService.DeleteAsModeratorAsync(id)
-                : await _itemService.DeleteAsync(id, userId!);
+        var savedItems = await _itemService.AddRangeAsync(items);
 
-            if (!deleted)
-            {
-                return NotFound();
-            }
-
-            return NoContent();
-        }
-
-        [HttpPost("upload")]
-        public async Task<IActionResult> UploadItems(IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-            {
-                return BadRequest("File is empty.");
-            }
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized();
-            }
-
-            await using var stream = file.OpenReadStream();
-
-            var items = await _itemFileLoader.LoadAsync(stream);
-
-            foreach (var item in items)
-            {
-                item.OwnerId = userId;
-            }
-
-            var savedItems = await _itemService.AddRangeAsync(items);
-
-            return Ok(savedItems);
-        }
+        return Ok(savedItems);
     }
 }
