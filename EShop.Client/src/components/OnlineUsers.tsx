@@ -23,5 +23,9 @@ export default function OnlineUsers() {
 
   if (count === null) return null;
 
-  return <span className="badge bg-success">Prisijungę: {count}</span>;
+return (
+  <span className="badge bg-success fw-normal fs-6 align-self-center px-3 py-2">
+    Prisijungę: {count}
+  </span>
+);
 }
