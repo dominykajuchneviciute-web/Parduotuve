@@ -300,23 +300,23 @@ var assemblies = [
       { "name": "EShop.Api.DTO.CreateCommentRequest", "rp": "EShop.Api_CreateCommentRequest.html", "cl": 1, "ucl": 0, "cal": 1, "tl": 3, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.DTO.CreateItemRequest", "rp": "EShop.Api_CreateItemRequest.html", "cl": 13, "ucl": 0, "cal": 13, "tl": 27, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.DTO.CreateReportRequest", "rp": "EShop.Api_CreateReportRequest.html", "cl": 1, "ucl": 0, "cal": 1, "tl": 26, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "EShop.Api.DTO.ReportedCommentResponse", "rp": "EShop.Api_ReportedCommentResponse.html", "cl": 0, "ucl": 7, "cal": 7, "tl": 26, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "EShop.Api.DTO.ReportedItemResponse", "rp": "EShop.Api_ReportedItemResponse.html", "cl": 2, "ucl": 5, "cal": 7, "tl": 26, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "EShop.Api.DTO.ReportResponse", "rp": "EShop.Api_ReportResponse.html", "cl": 3, "ucl": 3, "cal": 6, "tl": 26, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "EShop.Api.DTO.ReportedCommentResponse", "rp": "EShop.Api_ReportedCommentResponse.html", "cl": 7, "ucl": 0, "cal": 7, "tl": 26, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "EShop.Api.DTO.ReportedItemResponse", "rp": "EShop.Api_ReportedItemResponse.html", "cl": 3, "ucl": 4, "cal": 7, "tl": 26, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "EShop.Api.DTO.ReportResponse", "rp": "EShop.Api_ReportResponse.html", "cl": 4, "ucl": 2, "cal": 6, "tl": 26, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.DTOs.Chat.ConversationDto", "rp": "EShop.Api_ConversationDto.html", "cl": 5, "ucl": 0, "cal": 5, "tl": 10, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.DTOs.Chat.MessageDto", "rp": "EShop.Api_MessageDto.html", "cl": 6, "ucl": 0, "cal": 6, "tl": 11, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.DTOs.Chat.SendMessageRequest", "rp": "EShop.Api_SendMessageRequest.html", "cl": 1, "ucl": 0, "cal": 1, "tl": 6, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.Factories.ItemFactory", "rp": "EShop.Api_ItemFactory.html", "cl": 68, "ucl": 0, "cal": 68, "tl": 78, "cb": 12, "tb": 12, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.Generics.ItemFilterRegistry\u003CT\u003E", "rp": "EShop.Api_ItemFilterRegistry_1.html", "cl": 17, "ucl": 0, "cal": 17, "tl": 38, "cb": 4, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "EShop.Api.Hubs.ChatHub", "rp": "EShop.Api_ChatHub.html", "cl": 0, "ucl": 25, "cal": 25, "tl": 48, "cb": 0, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "EShop.Api.Hubs.PresenceHub", "rp": "EShop.Api_PresenceHub.html", "cl": 0, "ucl": 18, "cal": 18, "tl": 36, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "EShop.Api.Hubs.ChatHub", "rp": "EShop.Api_ChatHub.html", "cl": 25, "ucl": 0, "cal": 25, "tl": 48, "cb": 5, "tb": 6, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "EShop.Api.Hubs.PresenceHub", "rp": "EShop.Api_PresenceHub.html", "cl": 18, "ucl": 0, "cal": 18, "tl": 36, "cb": 2, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.Models.Chat.Conversation", "rp": "EShop.Api_Conversation.html", "cl": 7, "ucl": 0, "cal": 7, "tl": 14, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.Models.Chat.Message", "rp": "EShop.Api_Message.html", "cl": 5, "ucl": 0, "cal": 5, "tl": 10, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.Models.Item", "rp": "EShop.Api_Item.html", "cl": 8, "ucl": 6, "cal": 14, "tl": 34, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.Models.ItemComment", "rp": "EShop.Api_ItemComment.html", "cl": 5, "ucl": 4, "cal": 9, "tl": 15, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.Models.ItemFilter", "rp": "EShop.Api_ItemFilter.html", "cl": 14, "ucl": 0, "cal": 14, "tl": 16, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.Models.ItemLike", "rp": "EShop.Api_ItemLike.html", "cl": 2, "ucl": 1, "cal": 3, "tl": 8, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "EShop.Api.Models.ItemReport", "rp": "EShop.Api_ItemReport.html", "cl": 7, "ucl": 1, "cal": 8, "tl": 15, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "EShop.Api.Models.ItemReport", "rp": "EShop.Api_ItemReport.html", "cl": 8, "ucl": 0, "cal": 8, "tl": 15, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.Models.Items.Clothing", "rp": "EShop.Api_Clothing.html", "cl": 6, "ucl": 6, "cal": 12, "tl": 19, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.Models.Items.Electronics", "rp": "EShop.Api_Electronics.html", "cl": 6, "ucl": 6, "cal": 12, "tl": 19, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.Models.Items.Footwear", "rp": "EShop.Api_Footwear.html", "cl": 6, "ucl": 6, "cal": 12, "tl": 19, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
@@ -331,7 +331,7 @@ var assemblies = [
       { "name": "EShop.Api.Services.ItemService", "rp": "EShop.Api_ItemService.html", "cl": 140, "ucl": 2, "cal": 142, "tl": 228, "cb": 18, "tb": 20, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.Services.ModerationException", "rp": "EShop.Api_ModerationException.html", "cl": 3, "ucl": 0, "cal": 3, "tl": 9, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "EShop.Api.Services.OnlineUserTracker", "rp": "EShop.Api_OnlineUserTracker.html", "cl": 10, "ucl": 0, "cal": 10, "tl": 23, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "EShop.Api.Services.ReportService", "rp": "EShop.Api_ReportService.html", "cl": 68, "ucl": 66, "cal": 134, "tl": 183, "cb": 6, "tb": 14, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
+      { "name": "EShop.Api.Services.ReportService", "rp": "EShop.Api_ReportService.html", "cl": 118, "ucl": 16, "cal": 134, "tl": 183, "cb": 9, "tb": 14, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
       { "name": "Program", "rp": "EShop.Api_Program.html", "cl": 72, "ucl": 4, "cal": 76, "tl": 102, "cb": 6, "tb": 8, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
     ]},
 ];
@@ -341,17 +341,9 @@ var metrics = [{ "name": "Crap Score", "abbreviation": "crp", "explanationUrl": 
 var historicCoverageExecutionTimes = [];
 
 var riskHotspotMetrics = [
-      { "name": "Crap Score", "explanationUrl": "https://googletesting.blogspot.de/2011/02/this-code-is-crap.html" },
-      { "name": "Cyclomatic complexity", "explanationUrl": "https://en.wikipedia.org/wiki/Cyclomatic_complexity" },
 ];
 
 var riskHotspots = [
-  {
-    "assembly": "EShop.Api", "class": "EShop.Api.Hubs.ChatHub", "reportPath": "EShop.Api_ChatHub.html", "methodName": "JoinConversation()", "methodShortName": "JoinConversation()", "fileIndex": 0, "line": 21,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
 ];
 
 var branchCoverageAvailable = true;
