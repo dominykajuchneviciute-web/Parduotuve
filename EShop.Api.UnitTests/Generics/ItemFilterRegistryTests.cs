@@ -2,7 +2,8 @@ using EShop.Api.Generics;
 using EShop.Api.Models;
 using EShop.Api.Models.Items;
 
-namespace EShop.Api.UnitTests;
+namespace EShop.Api.UnitTests.Generics;
+
 public class ItemFilterRegistryTests
 {
     [Fact]
@@ -24,8 +25,11 @@ public class ItemFilterRegistryTests
         Assert.Equal("Juoda striuke", result[0].Name);
     }
 
-    [Fact]
-    public void Apply_NullOrEmptyItemType_ReturnsUnfilteredQuery()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Apply_NullOrWhitespaceItemType_ReturnsUnfilteredQuery(string? itemType)
     {
         var registry = new ItemFilterRegistry<Item>();
         var items = new List<Item>
@@ -34,7 +38,7 @@ public class ItemFilterRegistryTests
             new Electronics { Name = "Preke 2" }
         }.AsQueryable();
 
-        var result = registry.Apply(items, null, new ItemFilter()).ToList();
+        var result = registry.Apply(items, itemType, new ItemFilter()).ToList();
 
         Assert.Equal(2, result.Count);
     }

@@ -3,7 +3,7 @@ using EShop.Api.Factories;
 using EShop.Api.Models;
 using EShop.Api.Models.Items;
 
-namespace EShop.Api.UnitTests;
+namespace EShop.Api.UnitTests.Factories;
 
 public class ItemFactoryTests
 {
@@ -28,6 +28,28 @@ public class ItemFactoryTests
         Assert.IsType(expectedType, result);
         Assert.Equal("Testine preke", result.Name);
         Assert.Equal(ItemCondition.New, result.Condition);
+    }
+
+    [Fact]
+    public void Create_ClothingWithSpecificProperties_MapsAllFieldsCorrectly()
+    {
+        var request = new CreateItemRequest
+        {
+            Category = "clothing",
+            Name = "Žieminė striukė",
+            Description = "Labai šilta",
+            Condition = ItemCondition.Good,
+            Color = "Juoda",
+            Manufacturer = "Nike"
+        };
+
+        var result = Assert.IsType<Clothing>(ItemFactory.Create(request));
+
+        Assert.Equal("Žieminė striukė", result.Name);
+        Assert.Equal("Labai šilta", result.Description);
+        Assert.Equal(ItemCondition.Good, result.Condition);
+        Assert.Equal("Juoda", result.Color);
+        Assert.Equal("Nike", result.Manufacturer);
     }
 
     [Fact]

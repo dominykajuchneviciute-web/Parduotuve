@@ -3,7 +3,7 @@ using System.Text.Json;
 using EShop.Api.Models.Items;
 using EShop.Api.Services;
 
-namespace EShop.Api.UnitTests;
+namespace EShop.Api.UnitTests.Services;
 
 public class ItemFileLoaderTests
 {
@@ -26,6 +26,29 @@ public class ItemFileLoaderTests
         Assert.IsType<Electronics>(items[1]);
         Assert.Equal("Striuke", items[0].Name);
         Assert.Equal("Ausines", items[1].Name);
+    }
+
+    [Fact]
+    public async Task LoadAsync_NullJsonLiteral_ReturnsEmptyList()
+    {
+        await using var stream = new MemoryStream(Encoding.UTF8.GetBytes("null"));
+        var loader = new ItemFileLoader();
+
+        var items = await loader.LoadAsync(stream);
+
+        Assert.NotNull(items);
+        Assert.Empty(items);
+    }
+
+    [Fact]
+    public async Task LoadAsync_EmptyArray_ReturnsEmptyList()
+    {
+        await using var stream = new MemoryStream(Encoding.UTF8.GetBytes("[]"));
+        var loader = new ItemFileLoader();
+
+        var items = await loader.LoadAsync(stream);
+
+        Assert.Empty(items);
     }
 
     [Fact]
