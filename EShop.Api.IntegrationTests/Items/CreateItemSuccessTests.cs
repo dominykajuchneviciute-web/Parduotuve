@@ -2,10 +2,10 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using EShop.Api.DTO;
-using EShop.Api.Tests.Infrastructure;
+using EShop.Api.IntegrationTests.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace EShop.Api.Tests.Items;
+namespace EShop.Api.IntegrationTests.Items;
 
 public class CreateItemSuccessTests(WebApplicationFactory<Program> factory) : IntegrationTestBase(factory)
 {

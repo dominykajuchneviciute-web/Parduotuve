@@ -2,10 +2,10 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using EShop.Api.DTOs.Chat;
-using EShop.Api.Tests.Infrastructure;
+using EShop.Api.IntegrationTests.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace EShop.Api.Tests.Chat;
+namespace EShop.Api.IntegrationTests.Chat;
 
 public class ChatMessagesTests(WebApplicationFactory<Program> factory) : IntegrationTestBase(factory)
 {

@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Respawn;
 
-namespace EShop.Api.Tests.Infrastructure;
+namespace EShop.Api.IntegrationTests.Infrastructure;
 
 public class RespawnDatabaseResetter : IAsyncDisposable
 {

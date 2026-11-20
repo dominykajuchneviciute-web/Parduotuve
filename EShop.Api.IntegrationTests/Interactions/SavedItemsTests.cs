@@ -1,9 +1,9 @@
 using System.Net;
 using System.Text.Json;
-using EShop.Api.Tests.Infrastructure;
+using EShop.Api.IntegrationTests.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace EShop.Api.Tests.Interactions;
+namespace EShop.Api.IntegrationTests.Interactions;
 
 public class SavedItemsTests(WebApplicationFactory<Program> factory) : IntegrationTestBase(factory)
 {

@@ -1,9 +1,9 @@
 using System.Net;
 using System.Text.Json;
-using EShop.Api.Tests.Infrastructure;
+using EShop.Api.IntegrationTests.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace EShop.Api.Tests.Chat;
+namespace EShop.Api.IntegrationTests.Chat;
 
 public class ConversationTests(WebApplicationFactory<Program> factory) : IntegrationTestBase(factory)
 {

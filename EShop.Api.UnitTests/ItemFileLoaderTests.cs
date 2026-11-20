@@ -3,7 +3,7 @@ using System.Text.Json;
 using EShop.Api.Models.Items;
 using EShop.Api.Services;
 
-namespace EShop.Api.Tests.Unit;
+namespace EShop.Api.UnitTests;
 
 public class ItemFileLoaderTests
 {

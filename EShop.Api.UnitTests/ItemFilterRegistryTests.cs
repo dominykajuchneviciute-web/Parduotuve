@@ -2,8 +2,7 @@ using EShop.Api.Generics;
 using EShop.Api.Models;
 using EShop.Api.Models.Items;
 
-namespace EShop.Api.Tests.Unit;
-
+namespace EShop.Api.UnitTests;
 public class ItemFilterRegistryTests
 {
     [Fact]

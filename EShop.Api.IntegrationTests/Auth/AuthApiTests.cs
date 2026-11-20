@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
-using EShop.Api.Tests.Infrastructure;
+using EShop.Api.IntegrationTests.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace EShop.Api.Tests.Auth;
+namespace EShop.Api.IntegrationTests.Auth;
 
 public class AuthApiTests(WebApplicationFactory<Program> factory) : IntegrationTestBase(factory)
 {

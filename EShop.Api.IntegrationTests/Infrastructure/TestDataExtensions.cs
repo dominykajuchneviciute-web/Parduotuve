@@ -6,7 +6,7 @@ using EShop.Api.Models;
 using EShop.Api.Models.Items;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EShop.Api.Tests.Infrastructure;
+namespace EShop.Api.IntegrationTests.Infrastructure;
 
 public static class TestDataExtensions
 {

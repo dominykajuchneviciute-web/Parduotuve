@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EShop.Api.Tests.Infrastructure;
+namespace EShop.Api.IntegrationTests.Infrastructure;
 
 public class IntegrationTestBase : IClassFixture<WebApplicationFactory<Program>>, IAsyncLifetime
 {

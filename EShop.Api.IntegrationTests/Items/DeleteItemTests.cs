@@ -1,8 +1,8 @@
 using System.Net;
-using EShop.Api.Tests.Infrastructure;
+using EShop.Api.IntegrationTests.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace EShop.Api.Tests.Items;
+namespace EShop.Api.IntegrationTests.Items;
 
 public class DeleteItemTests(WebApplicationFactory<Program> factory) : IntegrationTestBase(factory)
 {

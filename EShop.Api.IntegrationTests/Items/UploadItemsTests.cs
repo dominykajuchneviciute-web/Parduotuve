@@ -2,10 +2,10 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using EShop.Api.Tests.Infrastructure;
+using EShop.Api.IntegrationTests.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace EShop.Api.Tests.Items;
+namespace EShop.Api.IntegrationTests.Items;
 
 public class UploadItemsTests(WebApplicationFactory<Program> factory) : IntegrationTestBase(factory)
 {
