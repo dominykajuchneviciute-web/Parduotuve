@@ -10,18 +10,30 @@ namespace EShop.Api.IntegrationTests.Chat;
 public class ChatMessagesTests(WebApplicationFactory<Program> factory) : IntegrationTestBase(factory)
 {
     [Fact]
-    public async Task SendAndGetMessages_ReturnsSentMessage()
+    public async Task SendMessage_ValidText_ReturnsOkWithMessageDto()
     {
         var conversationId = await AuthClient.CreateOtherUserConversationAsync(Factory.Services);
 
         var sendRes = await AuthClient.PostAsJsonAsync(
             $"/api/chat/conversations/{conversationId}/messages",
             new SendMessageRequest { Text = "Sveiki, ar dar turite?" });
+
         Assert.Equal(HttpStatusCode.OK, sendRes.StatusCode);
+        using var doc = await JsonDocument.ParseAsync(await sendRes.Content.ReadAsStreamAsync());
+        Assert.Equal("Sveiki, ar dar turite?", doc.RootElement.GetProperty("text").GetString());
+    }
+
+    [Fact]
+    public async Task GetMessages_AfterSendingMessage_ReturnsSentMessageInHistory()
+    {
+        var conversationId = await AuthClient.CreateOtherUserConversationAsync(Factory.Services);
+        await AuthClient.PostAsJsonAsync(
+            $"/api/chat/conversations/{conversationId}/messages",
+            new SendMessageRequest { Text = "Sveiki, ar dar turite?" });
 
         var msgRes = await AuthClient.GetAsync($"/api/chat/conversations/{conversationId}/messages");
-        Assert.Equal(HttpStatusCode.OK, msgRes.StatusCode);
 
+        Assert.Equal(HttpStatusCode.OK, msgRes.StatusCode);
         using var doc = await JsonDocument.ParseAsync(await msgRes.Content.ReadAsStreamAsync());
         var messages = doc.RootElement.EnumerateArray().ToList();
         Assert.Single(messages);

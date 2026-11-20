@@ -7,18 +7,41 @@ namespace EShop.Api.UnitTests.Services;
 public class ItemServiceTests
 {
     [Fact]
-    public async Task AddGetAndDelete_ManagesItemsCorrectly()
+    public async Task AddAsync_ValidItem_PersistsAndRetrievesByIdAndOwner()
     {
         await using var context = TestHelpers.CreateInMemoryContext();
         var service = new ItemService(context);
 
         var item = await service.AddAsync(new Clothing { Name = "Kelnės", OwnerId = "user-1", Condition = ItemCondition.New });
+
         Assert.Single(await service.GetAllAsync());
         Assert.Single(await service.GetByOwnerAsync("user-1"));
         Assert.NotNull(await service.GetByIdAsync(item.Id));
+    }
 
-        Assert.False(await service.DeleteAsync(item.Id, "wrong-user"));
-        Assert.True(await service.DeleteAsync(item.Id, "user-1"));
+    [Fact]
+    public async Task DeleteAsync_ByDifferentUser_ReturnsFalseAndDoesNotDelete()
+    {
+        await using var context = TestHelpers.CreateInMemoryContext();
+        var service = new ItemService(context);
+        var item = await service.AddAsync(new Clothing { Name = "Kelnės", OwnerId = "user-1" });
+
+        var deleted = await service.DeleteAsync(item.Id, "wrong-user");
+
+        Assert.False(deleted);
+        Assert.Single(await service.GetAllAsync());
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ByOwner_ReturnsTrueAndRemovesItem()
+    {
+        await using var context = TestHelpers.CreateInMemoryContext();
+        var service = new ItemService(context);
+        var item = await service.AddAsync(new Clothing { Name = "Kelnės", OwnerId = "user-1" });
+
+        var deleted = await service.DeleteAsync(item.Id, "user-1");
+
+        Assert.True(deleted);
         Assert.Empty(await service.GetAllAsync());
     }
 

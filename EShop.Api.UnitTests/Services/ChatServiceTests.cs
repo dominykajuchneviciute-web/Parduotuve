@@ -1,4 +1,3 @@
-using EShop.Api.DTOs.Chat;
 using EShop.Api.Hubs;
 using EShop.Api.Models.Items;
 using EShop.Api.Services;
@@ -52,29 +51,52 @@ public class ChatServiceTests
     }
 
     [Fact]
-    public async Task SendMessageAndDeleteConversation_WorksCorrectly()
+    public async Task SendMessageAsync_ValidMessage_SavesAndReturnsMessageDto()
     {
         await using var context = TestHelpers.CreateInMemoryContext();
         context.Items.Add(new Clothing { Id = 1, Name = "Striuke", OwnerId = "owner-1" });
         await context.SaveChangesAsync();
 
-        var hubMock = CreateHubMock();
-        var service = new ChatService(context, hubMock.Object);
-
+        var service = new ChatService(context, CreateHubMock().Object);
         var conv = await service.CreateConversationAsync(1, "buyer-1");
+
         var msgResult = await service.SendMessageAsync(conv.Value, "buyer-1", "Labas!");
 
         Assert.NotNull(msgResult.Value);
         Assert.Equal("Labas!", msgResult.Value.Text);
+        Assert.True(msgResult.Value.IsMine);
+    }
+
+    [Fact]
+    public async Task GetMessagesAsync_ExistingMessages_ReturnsMessagesWithCorrectOwnership()
+    {
+        await using var context = TestHelpers.CreateInMemoryContext();
+        context.Items.Add(new Clothing { Id = 1, Name = "Striuke", OwnerId = "owner-1" });
+        await context.SaveChangesAsync();
+
+        var service = new ChatService(context, CreateHubMock().Object);
+        var conv = await service.CreateConversationAsync(1, "buyer-1");
+        await service.SendMessageAsync(conv.Value, "buyer-1", "Labas!");
 
         var messages = await service.GetMessagesAsync(conv.Value, "owner-1");
+
         Assert.Single(messages.Value!);
         Assert.False(messages.Value![0].IsMine);
+    }
+
+    [Fact]
+    public async Task DeleteConversationAsync_ExistingConversation_HidesConversationForUser()
+    {
+        await using var context = TestHelpers.CreateInMemoryContext();
+        context.Items.Add(new Clothing { Id = 1, Name = "Striuke", OwnerId = "owner-1" });
+        await context.SaveChangesAsync();
+
+        var service = new ChatService(context, CreateHubMock().Object);
+        var conv = await service.CreateConversationAsync(1, "buyer-1");
 
         var deleted = await service.DeleteConversationAsync(conv.Value, "buyer-1");
-        Assert.True(deleted.Value);
 
-        var buyerConvs = await service.GetConversationsAsync("buyer-1");
-        Assert.Empty(buyerConvs);
+        Assert.True(deleted.Value);
+        Assert.Empty(await service.GetConversationsAsync("buyer-1"));
     }
 }

@@ -8,22 +8,29 @@ namespace EShop.Api.IntegrationTests.Interactions;
 public class LikesTests(WebApplicationFactory<Program> factory) : IntegrationTestBase(factory)
 {
     [Fact]
-    public async Task ToggleLike_ExistingItem_TogglesLikeCountCorrectly()
+    public async Task ToggleLike_WhenNotLiked_IncreasesLikeCountToOne()
     {
         var itemId = await AuthClient.CreateTestItemAsync();
 
         var likeRes = await AuthClient.PostAsync($"/api/items/{itemId}/like", null);
-        Assert.Equal(HttpStatusCode.OK, likeRes.StatusCode);
 
-        using var doc1 = await JsonDocument.ParseAsync(await likeRes.Content.ReadAsStreamAsync());
-        Assert.True(doc1.RootElement.GetProperty("liked").GetBoolean());
-        Assert.Equal(1, doc1.RootElement.GetProperty("totalLikes").GetInt32());
+        Assert.Equal(HttpStatusCode.OK, likeRes.StatusCode);
+        using var doc = await JsonDocument.ParseAsync(await likeRes.Content.ReadAsStreamAsync());
+        Assert.True(doc.RootElement.GetProperty("liked").GetBoolean());
+        Assert.Equal(1, doc.RootElement.GetProperty("totalLikes").GetInt32());
+    }
+
+    [Fact]
+    public async Task ToggleLike_WhenAlreadyLiked_DecreasesLikeCountToZero()
+    {
+        var itemId = await AuthClient.CreateTestItemAsync();
+        await AuthClient.PostAsync($"/api/items/{itemId}/like", null);
 
         var unlikeRes = await AuthClient.PostAsync($"/api/items/{itemId}/like", null);
-        Assert.Equal(HttpStatusCode.OK, unlikeRes.StatusCode);
 
-        using var doc2 = await JsonDocument.ParseAsync(await unlikeRes.Content.ReadAsStreamAsync());
-        Assert.False(doc2.RootElement.GetProperty("liked").GetBoolean());
-        Assert.Equal(0, doc2.RootElement.GetProperty("totalLikes").GetInt32());
+        Assert.Equal(HttpStatusCode.OK, unlikeRes.StatusCode);
+        using var doc = await JsonDocument.ParseAsync(await unlikeRes.Content.ReadAsStreamAsync());
+        Assert.False(doc.RootElement.GetProperty("liked").GetBoolean());
+        Assert.Equal(0, doc.RootElement.GetProperty("totalLikes").GetInt32());
     }
 }
