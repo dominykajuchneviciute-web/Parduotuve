@@ -1,10 +1,8 @@
 using EShop.Api.Controllers;
 using EShop.Api.DTOs.Chat;
-using EShop.Api.Hubs;
-using EShop.Api.Models.Items;
 using EShop.Api.Services;
+using EShop.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Moq;
 
 namespace EShop.Api.UnitTests.Controllers;
@@ -14,9 +12,12 @@ public class ChatControllerTests
     [Fact]
     public async Task CreateConversation_ItemNotFound_ReturnsNotFound()
     {
-        await using var context = TestHelpers.CreateInMemoryContext();
-        var hubMock = new Mock<IHubContext<ChatHub>>();
-        var controller = new ChatController(new ChatService(context, hubMock.Object))
+        var mockService = new Mock<IChatService>();
+        mockService
+            .Setup(s => s.CreateConversationAsync(999, "buyer-1"))
+            .ReturnsAsync(ChatResult<int>.NotFound("Prekė nerasta."));
+
+        var controller = new ChatController(mockService.Object)
         {
             ControllerContext = TestHelpers.CreateControllerContext("buyer-1")
         };
@@ -29,12 +30,12 @@ public class ChatControllerTests
     [Fact]
     public async Task SendMessage_EmptyText_ReturnsBadRequest()
     {
-        await using var context = TestHelpers.CreateInMemoryContext();
-        context.Items.Add(new Clothing { Id = 1, Name = "Preke", OwnerId = "owner-1" });
-        await context.SaveChangesAsync();
+        var mockService = new Mock<IChatService>();
+        mockService
+            .Setup(s => s.SendMessageAsync(1, "buyer-1", "   "))
+            .ReturnsAsync(ChatResult<MessageDto>.BadRequest("Žinutė negali būti tuščia."));
 
-        var hubMock = new Mock<IHubContext<ChatHub>>();
-        var controller = new ChatController(new ChatService(context, hubMock.Object))
+        var controller = new ChatController(mockService.Object)
         {
             ControllerContext = TestHelpers.CreateControllerContext("buyer-1")
         };
