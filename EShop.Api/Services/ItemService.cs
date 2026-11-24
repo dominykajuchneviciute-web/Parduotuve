@@ -9,11 +9,14 @@ namespace EShop.Api.Services;
 public class ItemService
 {
     private readonly AppDbContext _context;
-    private readonly ItemFilterRegistry<Item> _filterRegistry = new();
+    private readonly ItemFilterRegistry<Item> _filterRegistry;
 
-    public ItemService(AppDbContext context)
+    public ItemService(
+        AppDbContext context,
+        ItemFilterRegistry<Item> filterRegistry)
     {
         _context = context;
+        _filterRegistry = filterRegistry;
 
         _filterRegistry.Register<Clothing>(
         "clothing",
