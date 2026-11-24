@@ -1,11 +1,11 @@
-
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using EShop.Api.Models;
+using EShop.Api.Services.Interfaces;
 
 namespace EShop.Api.Services;
 
-public class ItemFileLoader
+public class ItemFileLoader : IItemFileLoader
 {
     public async Task<List<Item>> LoadAsync(Stream stream)
     {

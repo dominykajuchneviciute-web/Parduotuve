@@ -4,10 +4,11 @@ using EShop.Api.Data;
 using EShop.Api.Models.Chat;
 using EShop.Api.DTOs.Chat;
 using EShop.Api.Hubs;
+using EShop.Api.Services.Interfaces;
 
 namespace EShop.Api.Services;
 
-public class ChatService
+public class ChatService : IChatService
 {
     private readonly AppDbContext _context;
     private readonly IHubContext<ChatHub> _hubContext;
@@ -19,6 +20,7 @@ public class ChatService
         _context = context;
         _hubContext = hubContext;
     }
+
     public async Task<ChatResult<int>> CreateConversationAsync(
         int itemId,
         string currentUserId)

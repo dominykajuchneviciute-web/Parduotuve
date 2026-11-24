@@ -1,11 +1,10 @@
 using EShop.Api.Models;
-using EShop.Api.Services;
+using EShop.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using EShop.Api.Factories;
 using EShop.Api.DTO;
-
 
 namespace EShop.Api.Controllers;
 
@@ -13,10 +12,10 @@ namespace EShop.Api.Controllers;
 [ApiController]
 public class ItemsController : ControllerBase
 {
-    private readonly ItemService _itemService;
-    private readonly ItemFileLoader _itemFileLoader;
+    private readonly IItemService _itemService;
+    private readonly IItemFileLoader _itemFileLoader;
 
-    public ItemsController(ItemService itemService, ItemFileLoader itemFileLoader)
+    public ItemsController(IItemService itemService, IItemFileLoader itemFileLoader)
     {
         _itemService = itemService;
         _itemFileLoader = itemFileLoader;
@@ -94,7 +93,6 @@ public class ItemsController : ControllerBase
             nameof(GetItem),
             new { id = createdItem.Id },
             createdItem);
-
     }
 
     [Authorize]

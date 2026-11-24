@@ -2,6 +2,7 @@ using EShop.Api.Data;
 using EShop.Api.DTO;
 using EShop.Api.Enum;
 using EShop.Api.Models;
+using EShop.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 

@@ -2,11 +2,12 @@ using EShop.Api.Data;
 using EShop.Api.Models;
 using EShop.Api.Generics;
 using EShop.Api.Models.Items;
+using EShop.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace EShop.Api.Services;
 
-public class ItemService
+public class ItemService : IItemService
 {
     private readonly AppDbContext _context;
     private readonly ItemFilterRegistry<Item> _filterRegistry = new();
@@ -87,6 +88,7 @@ public class ItemService
 
         return item;
     }
+    
     public async Task<List<Item>> AddRangeAsync(List<Item> items)
     {
         _context.Items.AddRange(items);

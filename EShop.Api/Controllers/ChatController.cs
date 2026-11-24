@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using EShop.Api.DTOs.Chat;
-using EShop.Api.Services;
+using EShop.Api.Services.Interfaces;
 
 namespace EShop.Api.Controllers;
 
@@ -11,9 +11,9 @@ namespace EShop.Api.Controllers;
 [Authorize]
 public class ChatController : ControllerBase
 {
-    private readonly ChatService _chatService;
-
-    public ChatController(ChatService chatService)
+    private readonly IChatService _chatService;
+    
+    public ChatController(IChatService chatService)
     {
         _chatService = chatService;
     }

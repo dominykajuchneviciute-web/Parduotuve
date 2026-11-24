@@ -1,6 +1,6 @@
 using EShop.Api.DTO;
 
-namespace EShop.Api.Services;
+namespace EShop.Api.Services.Interfaces;
 
 public interface IReportService
 {

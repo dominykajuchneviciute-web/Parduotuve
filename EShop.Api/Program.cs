@@ -2,14 +2,13 @@ using EShop.Api.Data;
 using EShop.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using EShop.Api.Services;
+using EShop.Api.Services.Interfaces;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi;
 using EShop.Api.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -18,7 +17,6 @@ builder.Services.AddControllers()
             new JsonStringEnumConverter());
     });
 
-
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -26,10 +24,10 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
-builder.Services.AddScoped<ItemService>();
-builder.Services.AddScoped<ItemFileLoader>();
-builder.Services.AddScoped<CommentLikeService>();
-builder.Services.AddScoped<ChatService>();
+builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<IItemFileLoader, ItemFileLoader>();
+builder.Services.AddScoped<ICommentLikeService, CommentLikeService>();
+builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<OnlineUserTracker>();
@@ -93,7 +91,7 @@ app.UseAuthorization();
 app.MapHub<ChatHub>("/hubs/chat");
 app.MapHub<PresenceHub>("/hubs/presence");
 
-var auth = app.MapGroup("/api/auth");//this has to stay
+var auth = app.MapGroup("/api/auth");
 auth.MapIdentityApi<IdentityUser>();
 
 app.MapControllers();
