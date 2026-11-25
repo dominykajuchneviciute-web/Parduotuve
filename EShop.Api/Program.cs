@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi;
 using EShop.Api.Hubs;
+using EShop.Api.Generics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddScoped<ItemFilterRegistry<Item>>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IItemFileLoader, ItemFileLoader>();
 builder.Services.AddScoped<ICommentLikeService, CommentLikeService>();
