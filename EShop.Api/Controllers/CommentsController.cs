@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using EShop.Api.DTO;
 using EShop.Api.Models;
-using EShop.Api.Services;
+using EShop.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +11,9 @@ namespace EShop.Api.Controllers;
 [ApiController]
 public class ItemInteractionsController : ControllerBase
 {
-    private readonly CommentLikeService _service;
+    private readonly ICommentLikeService _service;
 
-    public ItemInteractionsController(CommentLikeService service)
+    public ItemInteractionsController(ICommentLikeService service)
     {
         _service = service;
     }

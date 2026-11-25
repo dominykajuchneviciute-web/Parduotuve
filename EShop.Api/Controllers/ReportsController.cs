@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using EShop.Api.DTO;
 using EShop.Api.Services;
+using EShop.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

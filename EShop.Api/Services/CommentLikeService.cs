@@ -1,10 +1,11 @@
 using EShop.Api.Data;
 using EShop.Api.Models;
+using EShop.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace EShop.Api.Services;
 
-public class CommentLikeService
+public class CommentLikeService : ICommentLikeService
 {
     private readonly AppDbContext _context;
 
