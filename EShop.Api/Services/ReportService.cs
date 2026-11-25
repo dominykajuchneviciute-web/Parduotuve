@@ -29,7 +29,7 @@ public sealed class ReportService : IReportService
                 report.ReporterId == reporterId &&
                 report.Status == ReportStatus.Active))
         {
-            throw new ModerationException("Šį skelbimą jau pranešėte.");
+            throw ModerationException.DuplicateItemReport();
         }
 
         _context.ItemReports.Add(new ItemReport
@@ -46,7 +46,7 @@ public sealed class ReportService : IReportService
         catch (DbUpdateException exception) when (exception.InnerException is PostgresException postgresException &&
                                                   postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
         {
-            throw new ModerationException("Šį skelbimą jau pranešėte.");
+            throw ModerationException.DuplicateItemReport(exception);
         }
     }
 
@@ -62,7 +62,7 @@ public sealed class ReportService : IReportService
 
         if (comment.UserId == reporterId)
         {
-            throw new ModerationException("Negalite pranešti apie savo komentarą.");
+            throw ModerationException.SelfCommentReport();
         }
 
         if (await _context.ItemReports.AnyAsync(report =>
@@ -70,7 +70,7 @@ public sealed class ReportService : IReportService
                 report.ReporterId == reporterId &&
                 report.Status == ReportStatus.Active))
         {
-            throw new ModerationException("Apie šį komentarą jau pranešėte.");
+            throw ModerationException.DuplicateCommentReport();
         }
 
         _context.ItemReports.Add(new ItemReport
@@ -87,7 +87,7 @@ public sealed class ReportService : IReportService
         catch (DbUpdateException exception) when (exception.InnerException is PostgresException postgresException &&
                                                   postgresException.SqlState == PostgresErrorCodes.UniqueViolation)
         {
-            throw new ModerationException("Apie šį komentarą jau pranešėte.");
+            throw ModerationException.DuplicateCommentReport(exception);
         }
     }
 

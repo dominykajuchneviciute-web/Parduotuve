@@ -28,7 +28,7 @@ public class ReportsControllerTests
     {
         var mockService = new Mock<IReportService>();
         mockService.Setup(s => s.ReportItemAsync(1, "user-1", "Spamas"))
-            .ThrowsAsync(new ModerationException("Jau pranesta"));
+            .ThrowsAsync(new ModerationException(default, "Jau pranesta"));
 
         var controller = new ReportsController(mockService.Object)
         {
