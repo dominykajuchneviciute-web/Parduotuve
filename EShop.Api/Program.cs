@@ -31,6 +31,7 @@ builder.Services.AddScoped<IItemFileLoader, ItemFileLoader>();
 builder.Services.AddScoped<ICommentLikeService, CommentLikeService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<OnlineUserTracker>();
 
