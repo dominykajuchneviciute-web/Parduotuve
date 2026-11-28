@@ -11,5 +11,6 @@ public interface IItemService
     Task<Item> AddAsync(Item item);
     Task<List<Item>> AddRangeAsync(List<Item> items);
     Task<bool> DeleteAsync(int id, string ownerId);
-    Task<bool> DeleteAsModeratorAsync(int id);
+    Task<bool> DeleteAsStaffAsync(int id);
+    Task<bool> UpdateAsStaffAsync(int id, Item updatedItem);
 }

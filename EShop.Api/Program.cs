@@ -67,10 +67,26 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    if (!await roleManager.RoleExistsAsync("Moderator"))
+    var roleManager = scope.ServiceProvider
+        .GetRequiredService<RoleManager<IdentityRole>>();
+
+    string[] roles = { "User", "Moderator", "Admin" };
+
+    foreach (var role in roles)
     {
-        await roleManager.CreateAsync(new IdentityRole("Moderator"));
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            var result = await roleManager.CreateAsync(
+                new IdentityRole(role));
+
+            if (!result.Succeeded)
+            {
+                throw new InvalidOperationException(
+                    $"Nepavyko sukurti rolės {role}: " +
+                    string.Join(", ",
+                        result.Errors.Select(error => error.Description)));
+            }
+        }
     }
 }
 

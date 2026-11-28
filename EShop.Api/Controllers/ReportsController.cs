@@ -78,21 +78,21 @@ public sealed class ReportsController : ControllerBase
         }
     }
 
-    [Authorize(Roles = "Moderator")]
+    [Authorize(Roles = "Moderator,Admin")]
     [HttpGet]
     public async Task<ActionResult<List<ReportedItemResponse>>> GetReportedItems()
     {
         return Ok(await _reportService.GetReportedItemsAsync());
     }
 
-    [Authorize(Roles = "Moderator")]
+    [Authorize(Roles = "Moderator,Admin")]
     [HttpGet("comments")]
     public async Task<ActionResult<List<ReportedCommentResponse>>> GetReportedComments()
     {
         return Ok(await _reportService.GetReportedCommentsAsync());
     }
 
-    [Authorize(Roles = "Moderator")]
+    [Authorize(Roles = "Moderator,Admin")]
     [HttpPost("{reportId:int}/dismiss")]
     public async Task<IActionResult> DismissReport(int reportId)
     {

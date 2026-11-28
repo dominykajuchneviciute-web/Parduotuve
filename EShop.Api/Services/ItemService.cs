@@ -117,7 +117,7 @@ public class ItemService : IItemService
         return true;
     }
 
-    public async Task<bool> DeleteAsModeratorAsync(int id)
+    public async Task<bool> DeleteAsStaffAsync(int id)
     {
         var item = await _context.Items.FirstOrDefaultAsync(item => item.Id == id);
         if (item is null)

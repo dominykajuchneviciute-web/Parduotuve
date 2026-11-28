@@ -100,9 +100,17 @@ public class ItemsController : ControllerBase
     public async Task<IActionResult> DeleteItem(int id)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var deleted = User.IsInRole("Moderator")
-            ? await _itemService.DeleteAsModeratorAsync(id)
-            : await _itemService.DeleteAsync(id, userId!);
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+
+        var isStaff = User.IsInRole("Moderator") || User.IsInRole("Admin");
+
+        var deleted = isStaff
+            ? await _itemService.DeleteAsStaffAsync(id)
+            : await _itemService.DeleteAsync(id, userId);
 
         if (!deleted)
         {
